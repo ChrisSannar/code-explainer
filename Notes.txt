@@ -1,0 +1,9 @@
+Things to do:
+
+- Fix the Scrolling
+    * Style Bars
+    * Have the line numbers follow suit
+
+Things to consider:
+
+1. No mobile version. It'll just be too hard to implement. Instead have a page that explains why
