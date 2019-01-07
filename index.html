@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
@@ -92,7 +93,6 @@ function highlight(rules) {
     rules.forEach(rule => {
         let regy = new RegExp(rule.expression);
         divs.forEach(div => {
-            console.log(div.textContent)
             div.innerHTML = "<span>" + div.textContent + "</span>";
         });
     })
@@ -102,34 +102,6 @@ updateLineNumbers();
 
 </script>
 <style>
-body {
-    background: #1A1A1A;
-    text-align: center;
-}
 
-.editor {
-    display: flex;
-    flex-direction: row;
-    background: #20201F;
-    color: white;
-    font-family: 'Courier New', Courier, monospace;
-    width: 800px;
-    margin: auto;
-}
-
-.codespace {
-    padding: 1em;
-    padding-top: 1.5em;
-    text-align: left;
-    overflow: scroll;
-    width: 100%;
-}
-
-.lineNumber {
-    color: #777777;
-    width: 1em;
-    padding-top: 1.5em;
-    padding-left: 1em;
-}
 </style>
 </html>
