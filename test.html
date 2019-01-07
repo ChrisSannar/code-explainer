@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="editor">
+        <div id="codespace">
+            <div class="test">
+                asdflkjeio;asdlfkj
+            </div>
+            <div>
+                asdkfjie
+                <span>skdfie</span>
+            </div>
+
+        </div>
+    </div>
+</body>
+<script>
+
+// Just to make sure the editor remains the full page
+adjustEditorWindow();
+window.onresize = adjustEditorWindow;
+
+function adjustEditorWindow() {
+    document.querySelector(".editor").style.height = window.innerHeight + "px";
+}
+
+let codespace = document.querySelector("#codespace");
+let codespaceFocus = false;
+
+// Used to focus on the editor when in use
+window.addEventListener("click", function (e) {
+    if(e.path.findIndex(function (x) { return x.id == "codespace"; }) >= 0) {
+        codespace.classList.add("selected");
+        codespaceFocus = true;
+    } else {
+        codespace.classList.remove("selected");
+        codespaceFocus = false;
+    }
+});
+
+let content = "";
+
+window.addEventListener("keydown", function(e) {
+    console.log(e.keyCode);
+    if (codespaceFocus){
+        content += String.fromCharCode(e.keyCode);
+        codespace.innerHTML = content;
+    }
+})
+
+</script>
+</html>

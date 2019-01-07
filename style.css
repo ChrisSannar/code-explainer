@@ -1,0 +1,33 @@
+body {
+    background: #1A1A1A;
+    text-align: center;
+}
+
+.editor {
+    display: flex;
+    flex-direction: row;
+    background: #20201F;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    width: 800px;
+    margin: auto;
+}
+
+#codespace {
+    padding: 1em;
+    padding-top: 1.5em;
+    text-align: left;
+    overflow: scroll;
+    width: 100%;
+}
+
+.selected {
+    box-shadow: 0px 0px 10px #777777;
+}
+
+.lineNumber {
+    color: #777777;
+    width: 1em;
+    padding-top: 1.5em;
+    padding-left: 1em;
+}
