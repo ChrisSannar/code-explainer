@@ -26,6 +26,7 @@ body {
 
 #codespace > p {
     margin: 0;
+    height: 1.15em;
 }
 
 /* .selected {
@@ -37,4 +38,14 @@ body {
     width: 1em;
     padding-top: 1.5em;
     padding-left: 1em;
+    height: 1.15em;
+}
+
+#cursor {
+    width: 1.5px;
+    /* height: 1em; */
+    height: 0.8em;
+    background: rgb(200, 200, 200);
+    display: inline-block;
+    margin-left: 2px;
 }

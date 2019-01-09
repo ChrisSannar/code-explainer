@@ -57,13 +57,12 @@ let cursorBlink = setInterval(function() {
             removeCursor();
         }
     }
-}, 650);
+}, 500);
 
 function setCursor() {
     let kids = document.querySelector("#codespace").childNodes;
     let el = document.createElement("span");
     el.id = "cursor";
-    el.innerHTML = "|"
     kids[lineIndex].appendChild(el);
     blink = false;
 }
