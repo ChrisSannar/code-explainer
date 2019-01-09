@@ -1,10 +1,12 @@
 Things to do:
 
-- Implement the cursor and inserting into the middle of some text
+- Implement the cursor 
+- Inserting the cursor into middle of some text (maybe have it hover over?)
 - Cursor and select lines to copy and paste
 √ Overflow and extra line stuff (DONE)
 - Pasting stuff
-- Select
+- Select things with cursor
+- Wrap text and give a hover over for selecting stuff
 
 Things to consider:
 
