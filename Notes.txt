@@ -1,9 +1,14 @@
 Things to do:
 
-- Fix the Scrolling
-    * Style Bars
-    * Have the line numbers follow suit
+- Implement the cursor and inserting into the middle of some text
+- Cursor and select lines to copy and paste
+√ Overflow and extra line stuff (DONE)
+- Pasting stuff
+- Select
 
 Things to consider:
 
 1. No mobile version. It'll just be too hard to implement. Instead have a page that explains why
+
+
+Get a very limited view by Jan 22.
