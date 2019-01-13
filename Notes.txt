@@ -7,10 +7,20 @@ Things to do:
 - Pasting stuff
 - Select things with cursor
 - Wrap text and give a hover over for selecting stuff
+- Control codes
+    * refresh
+    * copy
+    * paste
+    * save
+    * select all
 
 Things to consider:
 
 1. No mobile version. It'll just be too hard to implement. Instead have a page that explains why
-
+2. What should we have in the rules?
+    - tag
+    - regex
+    - color
+    - discription
 
 Get a very limited view by Jan 22.
