@@ -74,6 +74,7 @@ function removeCursor() {
 }
 
 window.addEventListener("keydown", function(e) {
+    e.preventDefault();
     if (codespaceFocus){
         appendToContent(e.key);
     }
@@ -144,8 +145,9 @@ function appendToContent(key) {
     let num = 1;
     lines.forEach(line => {
         let el = document.createElement("p");
-        el.innerHTML = line;
+        el.innerHTML = markify(line, rules);
         codespace.appendChild(el);
+
         let el2 = document.createElement("span");
         el2.innerHTML = num++ + "<br>";
         lineNum.appendChild(el2);
@@ -155,6 +157,41 @@ function appendToContent(key) {
 
     setTimeout(() => { typing = false }, 100);
 }
+
+let rules = [
+    {
+        tag: "function",
+        regex: /function/g,
+        color: "green"
+    },
+    {
+        tag: "semicolon",
+        regex: /;/g,
+        color: "red"
+    },
+    {
+        tag: "test",
+        regex: /test/g,
+        color: "yellow"
+    }
+];
+
+function markify(line, rules) {
+    let result = line;
+    rules.forEach((rule, index) => {
+        result = result.replace(rule.regex, function (x) {
+            return '<span class="' + rule.tag + '" onmouseover="openModal(' + index + ', this)" style="color: ' + rule.color + ' ">' + x + '</span>';
+        });
+    })
+    return result;
+}
+
+function openModal(index, element) {
+    let rule = rules[index];
+    let rect = element.getBoundingClientRect();
+    console.log(rect.top, rect.right, rect.bottom, rect.left);
+}
+
 
 </script>
 </html>
