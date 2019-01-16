@@ -14,6 +14,7 @@
         </div>
         <!-- <div id="codespace"><div><br></div></div> -->
         <div id="codespace"><p></p></div>
+        <div id="modal"></div>
     </div>
 </body>
 <script>
@@ -162,17 +163,20 @@ let rules = [
     {
         tag: "function",
         regex: /function/g,
-        color: "green"
+        color: "green",
+        text: "This is a funciton"
     },
     {
         tag: "semicolon",
         regex: /;/g,
-        color: "red"
+        color: "red",
+        text: "This is a semicolon"
     },
     {
         tag: "test",
         regex: /test/g,
-        color: "yellow"
+        color: "yellow",
+        text: "This is a test"
     }
 ];
 
@@ -180,18 +184,38 @@ function markify(line, rules) {
     let result = line;
     rules.forEach((rule, index) => {
         result = result.replace(rule.regex, function (x) {
-            return '<span class="' + rule.tag + '" onmouseover="openModal(' + index + ', this)" style="color: ' + rule.color + ' ">' + x + '</span>';
+            return '<span class="' + rule.tag + '" onmouseover="openModal(' + index + ', this)" onmouseout="closeModal()" style="color: ' + rule.color + ' ">' + x + '</span>';
         });
     })
     return result;
 }
 
+var modalFadeout;
+
 function openModal(index, element) {
+    if (modalFadeout) { clearTimeout(modalFadeout); }
+
     let rule = rules[index];
     let rect = element.getBoundingClientRect();
-    console.log(rect.top, rect.right, rect.bottom, rect.left);
+    let modal = document.querySelector("#modal");
+    // modal.style.visibility = "visible";
+
+    if (modal.style.display == "none") { modal.style.display = "block"; }
+
+    modal.classList.remove("hidden");
+    modal.classList.add("visible");
+    modal.style.left = ((rect.left - (modal.offsetWidth / 2)) + (element.offsetWidth / 2)) + "px";
+    modal.style.top = (20 + rect.top) + "px";
 }
 
+function closeModal() {
+    modalFadeout = setTimeout(function () {
+        let modal = document.querySelector("#modal");
+        // modal.style.visibility = "hidden";
+        modal.classList.remove("visible");
+        modal.classList.add("hidden");
+    }, 100);
+}
 
 </script>
 </html>

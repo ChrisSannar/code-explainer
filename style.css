@@ -49,3 +49,26 @@ body {
     display: inline-block;
     margin-left: 2px;
 }
+
+#modal {
+    display: none;
+    background: white;
+    float: left;
+    position: absolute;
+    width: 10em;
+    min-height: 300px;
+    transition: 0.2s;
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    /* transition: opacity 0.1s linear; */
+    transition: opacity 0.5s;
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    /* transition: visibility 0s 0.1s, opacity 0.1s linear; */
+}
