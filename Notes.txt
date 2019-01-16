@@ -1,6 +1,6 @@
 Things to do:
 
-- Implement the cursor 
+√ Implement the cursor 
 - Inserting the cursor into middle of some text (maybe have it hover over?)
 - Cursor and select lines to copy and paste
 √ Overflow and extra line stuff (DONE)
@@ -21,6 +21,11 @@ Things to consider:
     - tag
     - regex
     - color
-    - discription
+    - text
+
+Extra stuff if there's time:
+
+- "Grammar Checker": Check spelling for common words (ex: funciton -> function)
+- Get a bunch of people to use it and then start doing data collection.
 
 Get a very limited view by Jan 22.
