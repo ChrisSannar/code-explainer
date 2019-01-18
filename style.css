@@ -51,24 +51,27 @@ body {
 }
 
 #modal {
-    display: none;
+    /* display: none; */
     background: white;
     float: left;
     position: absolute;
     width: 10em;
     min-height: 300px;
     transition: 0.2s;
+    color: black;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 .visible {
-    visibility: visible;
+    display: block;
+    /* visibility: visible;
     opacity: 1;
-    /* transition: opacity 0.1s linear; */
-    transition: opacity 0.5s;
+    transition: opacity 0.1s linear; */
 }
 
 .hidden {
-    visibility: hidden;
+    display: none;
+    /* visibility: hidden;
     opacity: 0;
-    /* transition: visibility 0s 0.1s, opacity 0.1s linear; */
+    transition: visibility 0s 0.1s, opacity 0.1s linear; */
 }

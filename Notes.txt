@@ -13,6 +13,8 @@ Things to do:
     * paste
     * save
     * select all
+    * undo
+    * redo
 
 Things to consider:
 
