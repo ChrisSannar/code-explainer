@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="editor">
+        <div class="lineNumber"></div>
+        <div class="codespace" contenteditable="true"></div>
+    </div>
+</body>
+<script>
+
+// Just to make sure the editor remains the full page
+adjustEditorWindow();
+window.onresize = adjustEditorWindow;
+
+function adjustEditorWindow() {
+    document.querySelector(".editor").style.height = window.innerHeight + "px";
+    document.querySelector(".codespace").focus();
+}
+
+let codespace = document.querySelector(".codespace");
+codespace.focus();
+
+// Whenever the editor changes, 
+codespace.addEventListener("input", change, false);
+
+// to handle pasted code
+codespace.addEventListener("paste", function(e) {
+    e.preventDefault();
+    var text = e.clipboardData.getData("text/plain");
+    let temp = text.split('\n');
+    temp.forEach(line => {
+        if (line[0] == " ") {
+            let i = 0;
+            let result = "";
+            while (line[i++] == " "){
+                result += "&ensp;";
+            }
+            line = result + line;
+        }
+        let el = document.createElement("div");
+        el.innerHTML = line;
+        codespace.appendChild(el);
+    });
+    change();
+});
+
+// Whenever text is inserted into the editor, call this
+function change() {
+    updateLineNumbers();
+    let rules = [
+        {
+            expression: "",
+            color: "blue",
+            info: ""
+        }
+    ]
+    highlight(rules);
+}
+
+// Updates the line numbers of the document whenever there is a change
+function updateLineNumbers() {
+
+    // get the 'lines' div and lines in codespace. clear
+    let lines = document.querySelector(".lineNumber");
+    let divs = codespace.childNodes;
+    lines.innerHTML = "";
+
+    // if it's empty, we're just starting. Give it a 1
+    if (divs.length == 0) {
+        let temp = document.createElement("div");
+        temp.innerHTML = 1;
+        lines.appendChild(temp);
+    } else {    // Otherwise, for each of the lines we add a number
+        let i = 1;
+        divs.forEach(div => {
+            let temp = document.createElement("div");
+            temp.style.height = div.clientHeight + "px";    // make sure the heights match
+            temp.innerHTML = i++;
+            lines.appendChild(temp);
+        })
+    }
+}
+
+function highlight(rules) {
+    let divs = document.querySelectorAll(".codespace > div");
+    rules.forEach(rule => {
+        let regy = new RegExp(rule.expression);
+        divs.forEach(div => {
+            div.innerHTML = "<span>" + div.textContent + "</span>";
+        });
+    })
+}
+
+updateLineNumbers();
+
+</script>
+<style>
+
+</style>
+</html>
