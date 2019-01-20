@@ -1,12 +1,14 @@
 Things to do:
 
-√ Implement the cursor 
+√ Implement the cursor
 - Inserting the cursor into middle of some text (maybe have it hover over?)
 - Cursor and select lines to copy and paste
 √ Overflow and extra line stuff (DONE)
 - Pasting stuff
 - Select things with cursor
-- Wrap text and give a hover over for selecting stuff
+√ Wrap text and give a hover over for selecting stuff
+~ Set up Json file of "rules"
+√ Fix "repeat regex" problem with string.replace
 - Control codes
     * refresh
     * copy
@@ -20,10 +22,11 @@ Things to consider:
 
 1. No mobile version. It'll just be too hard to implement. Instead have a page that explains why
 2. What should we have in the rules?
-    - tag
-    - regex
-    - color
-    - text
+    - tag: the name/ID of the rule
+    - regex: the regular expression to search for
+    - replace: what to replace
+    - color: the color to identify it
+    - html: what will be placed inside the modal
 
 Extra stuff if there's time:
 

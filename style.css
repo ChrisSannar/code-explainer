@@ -55,7 +55,7 @@ body {
     background: white;
     float: left;
     position: absolute;
-    width: 10em;
+    width: 20em;
     min-height: 300px;
     transition: 0.2s;
     color: black;
