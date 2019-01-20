@@ -1,29 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <script src="./js/jquery-3.3.1.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <title>Document</title>
-</head>
-<body>
-    <div class="editor">
-        <div id="lineNumber">
-            <div>1<br></div>
-        </div>
-        <div id="codespace"><p></p></div>
-        <div id="modal" class="hidden"></div>
-    </div>
-</body>
-<script src="./js/index.js"></script>
-<script src="./js/rules.js"></script>
-<!-- <script>
-
 // Just to make sure the editor remains the full page
 adjustEditorWindow();
 window.onresize = adjustEditorWindow;
+
 
 function adjustEditorWindow() {
     document.querySelector(".editor").style.height = window.innerHeight + "px";
@@ -161,46 +139,54 @@ function appendToContent(key) {
     setTimeout(() => { typing = false }, 100);
 }
 
-let rules = [
-    {
-        tag: "function",
-        regex: /function/g,
-        color: "green",
-        text: "This is a function"
-    },
-    {
-        tag: "semicolon",
-        regex: /;/g,
-        color: "red",
-        text: "This is a semicolon"
-    },
-    {
-        tag: "test",
-        regex: /test/g,
-        color: "yellow",
-        text: "This is a test"
-    },
-    // {
-    //     tag: "(",
-    //     regex: /\(/g,
-    //     color: "blue",
-    //     text: "This is ()"
-    // },
-    // {
-    //     tag: "",
-    //     regex: /\)/g,
-    //     color: "blue",
-    //     text: "This is ()"
-    // }
-];
-
+// Returns a html ready line for each occurance
+// string "replace" not used due to replacing tagged content already.
 function markify(line, rules) {
-    let result = line;
+    let result = "";
+    let words = []; // details of each occurance
+    let occur = []; // all times there is an occurance
+
+    // Find everywhere we have a matching rule
     rules.forEach((rule, index) => {
-        result = result.replace(rule.regex, function (x) {
-            return '<span class="' + rule.tag + '" onmouseover="openModal(' + index + ', this)" onmouseout="closeModal()" style="color: ' + rule.color + ' ">' + x + '</span>';
+        let word = line.match(rule.regex); // search for the given word
+        let start = []; // Each index of the occurance
+        if (word){
+            let exp;
+            while (exp = rule.regex.exec(line)) {
+                occur.push(exp.index);
+                start.push(exp.index);
+            }
+            words.push({tag: word[0], start: start, rule: rule, index: index});
+        }
+    });
+
+    occur.sort((a, b) => a - b);  // sort the occurances to be efficient
+    // tag everywhere we have a rule
+    if (occur.length > 0){
+        let pre = 0;
+        occur.forEach(occurance => {    // For each time we have an expression to wrap
+            // Set untagged stuff between our words
+            result += line.substr(pre, occurance - pre);
+
+            // Get the word we're wrapping
+            let word = words.find(each => { 
+                return each.start.includes(occurance);
+            });
+
+            // wrap the word and put it in
+            let temp = line.substr(occurance, word.tag.length);
+            result += `<span class="${word.rule.tag}" onmouseover="openModal(${word.index}, this)" onmouseout="closeModal()" style="color: ${word.rule.color};">` + temp + '</span>';
+
+            // keep track of the next spot
+            pre = occurance + word.tag.length;
         });
-    })
+        // tag on whatever's left
+        result += line.substr(pre, line.length);
+    } else {
+        result = line;
+    }
+
+    // Our resulting line
     return result;
 }
 
@@ -220,7 +206,7 @@ function openModal(index, element) {
     modal.classList.add("visible");
     modal.style.left = ((rect.left - (modal.offsetWidth / 2)) + (element.offsetWidth / 2)) + "px";
     modal.style.top = (20 + rect.top) + "px";
-    modal.innerHTML = `<p>${rule.text}</p>`;
+    modal.innerHTML = `${rule.html}`;
 }
 
 function closeModal() {
@@ -232,5 +218,3 @@ function closeModal() {
     }, 100);
 }
 
-</script> -->
-</html>
