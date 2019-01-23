@@ -57,7 +57,7 @@ function removeCursor() {
 window.addEventListener("keydown", function(e) {
     e.preventDefault();
     if (codespaceFocus){
-        appendToContent(e.key);
+        appendToContent(e, e.key);
     }
 });
 
@@ -67,10 +67,17 @@ window.addEventListener("keydown", function(e) {
 //     console.log(codespace.children);
 // }
 
-function appendToContent(key) {
+function appendToContent(e, key) {
     typing = true;
 
     switch (key) {
+        case "r":
+            if (e.ctrlKey || e.metaKey) {
+                location.reload(true);
+            } else {
+                lines[lineIndex] += key;
+            }
+            break;
         case "Space":
             lines[lineIndex] += " ";
             break;
@@ -215,6 +222,6 @@ function closeModal() {
         // modal.style.visibility = "hidden";
         modal.classList.remove("visible");
         modal.classList.add("hidden");
-    }, 100);
+    }, 300);
 }
 

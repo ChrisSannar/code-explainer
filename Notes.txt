@@ -1,16 +1,20 @@
 Things to do:
 
 √ Implement the cursor
+√ Overflow and extra line stuff
+√ Wrap text and give a hover over for selecting stuff
+√ Fix "repeat regex" problem with string.replace
+~ Set up JSON file of "rules"
+    * Parse the JSON file properly
+    * Make sure there's no duplicate tags
+- Handle overflow with line limit (happens after ~38 lines)
 - Inserting the cursor into middle of some text (maybe have it hover over?)
 - Cursor and select lines to copy and paste
-√ Overflow and extra line stuff (DONE)
 - Pasting stuff
 - Select things with cursor
-√ Wrap text and give a hover over for selecting stuff
-~ Set up Json file of "rules"
-√ Fix "repeat regex" problem with string.replace
-- Control codes
-    * refresh
+- When a function is declared, have it's call link to its declaration
+- Control codes (set difference for Mac and Windows)
+    √ refresh
     * copy
     * paste
     * save
@@ -27,10 +31,11 @@ Things to consider:
     - replace: what to replace
     - color: the color to identify it
     - html: what will be placed inside the modal
+    - links: All the other tags to link to that have a relation to eachother
+3. Useless information: "this is error code 24"
 
 Extra stuff if there's time:
 
 - "Grammar Checker": Check spelling for common words (ex: funciton -> function)
 - Get a bunch of people to use it and then start doing data collection.
-
-Get a very limited view by Jan 22.
+- Check if the code compiles and then show errors if it doesn't.
