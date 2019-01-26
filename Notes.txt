@@ -21,6 +21,12 @@ Things to do:
     * select all
     * undo
     * redo
+- Additional keys
+    * End? (Mac)
+    * Control
+    * Escape
+    * Any 'Alt' Codes
+    * Function codes (F1, F2, etc...)
 
 Things to consider:
 

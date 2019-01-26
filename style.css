@@ -9,24 +9,37 @@ body {
     background: #333333;
     color: white;
     font-family: 'Courier New', Courier, monospace;
+    /* font-family: 'Lucida Console', monospace; */
     width: 800px;
     margin: auto;
 }
 
 #codespace {
+    text-align: left;
     margin: 1em;
     margin-top: 1.5em;
-    text-align: left;
-    overflow: scroll;
     width: 100%;
     cursor: text;
+    overflow: scroll;
     overflow-x: scroll;
     white-space: nowrap;
+}
+
+#cursorspace {
+    position: absolute;
+}
+
+#cursor2 {
+    width: 1.5px;
+    height: 1em;
+    background: rgb(200, 200, 200);
+    display: inline-block;
 }
 
 #codespace > p {
     margin: 0;
     height: 1.15em;
+    white-space: pre;
 }
 
 /* .selected {

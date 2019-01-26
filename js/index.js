@@ -13,46 +13,43 @@ let codespaceFocus = false;
 
 // Used to focus on the editor when in use
 window.addEventListener("click", function (e) {
-    if(e.path.findIndex(function (x) { return x.id == "codespace"; }) >= 0) {
-        codespace.classList.add("selected");
-        codespaceFocus = true;
-    } else {
-        codespace.classList.remove("selected");
-        codespaceFocus = false;
+    if (e.path){
+        if(e.path.findIndex(function (x) { return x.id == "codespace"; }) >= 0) {
+            codespace.classList.add("selected");
+            codespaceFocus = true;
+        } else {
+            codespace.classList.remove("selected");
+            codespaceFocus = false;
+        }
+    } else  {
+        if (hasCodespaceInAncestry(e.target)) {
+            codespace.classList.add("selected");
+            codespaceFocus = true;
+        } else {
+            codespace.classList.remove("selected");
+            codespaceFocus = false;
+        }
     }
 });
 
+function hasCodespaceInAncestry(el) {
+    const codespace = document.querySelector("#codespace");
+    while(el != document.querySelector("body")){
+        if (el == codespace) {
+            return true;
+        } else {
+            el = el.parentNode;
+        }
+    }
+    return false;
+}
+
 let lines = [""];
 let lineIndex = 0;
-// let cursor = document.createElement("span");
-// cursor.id = "cursor";
+let lineCol = 0;
 
 let blink = true;
 let typing = false;
-
-let cursorBlink = setInterval(function() {
-    if (!typing) {
-        if (blink) {
-            setCursor();
-        } else {
-            removeCursor();
-        }
-    }
-}, 500);
-
-function setCursor() {
-    let kids = document.querySelector("#codespace").childNodes;
-    let el = document.createElement("span");
-    el.id = "cursor";
-    kids[lineIndex].appendChild(el);
-    blink = false;
-}
-
-function removeCursor() {
-    let el = document.querySelector("#cursor");
-    if (el) { el.parentNode.removeChild(el); }
-    blink = true;
-}
 
 window.addEventListener("keydown", function(e) {
     e.preventDefault();
@@ -61,15 +58,10 @@ window.addEventListener("keydown", function(e) {
     }
 });
 
-// function setCursor() {
-//     // codespace.childNodes[lineIndex]
-//     console.log(codespace.childNodes);
-//     console.log(codespace.children);
-// }
-
 function appendToContent(e, key) {
     typing = true;
 
+    let step = 1;
     switch (key) {
         case "r":
             if (e.ctrlKey || e.metaKey) {
@@ -96,31 +88,46 @@ function appendToContent(e, key) {
                     lines[lineIndex] = lines[lineIndex].substr(0, lines[lineIndex].length - 1);
                 }
             }
+            step = -1;
             break;
         case "Enter":
             lines.push("");
             lineIndex++;
             break;
         case "Tab":
+            step = 0;
             // lines[lineIndex] += "&#9;";
             break;
         case "Shift":
+            step = 0;
             break;
         case "CapsLock":
+            step = 0;
             break;
         case "Meta":
+            step = 0;
             break;
         case "Alt":
+            step = 0;
             break;
         case "ArrowUp":
+            step = 0;
             break;
         case "ArrowDown":
+            step = 0;
             break;
         case "ArrowLeft":
+            // step = -1;
+            step = 0;
+            lineCol--;
             break;
         case "ArrowRight":
+            // step = 1;
+            step = 0;
+            lineCol++;
             break;
         default:
+            lineCol++;
             lines[lineIndex] += key;
             break;
     }
@@ -131,9 +138,10 @@ function appendToContent(e, key) {
 
     // *** Should we render the entire DOM over and over again?
     let num = 1;
+
     lines.forEach(line => {
         let el = document.createElement("p");
-        el.innerHTML = markify(line, rules);
+        el.innerHTML = `<span>${markify(line, rules)}</span>`;
         codespace.appendChild(el);
 
         let el2 = document.createElement("span");
@@ -141,6 +149,7 @@ function appendToContent(e, key) {
         lineNum.appendChild(el2);
     });
 
+    indentCursor(lineIndex, step);
     setCursor();
 
     setTimeout(() => { typing = false }, 100);
