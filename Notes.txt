@@ -7,6 +7,7 @@ Things to do:
 ~ Set up JSON file of "rules"
     * Parse the JSON file properly
     * Make sure there's no duplicate tags
+- FIX ALL POSSIBILITY OF HTML TAGS BEING INSERTED (use the 'pre' tag?)
 - Handle overflow with line limit (happens after ~38 lines)
 - Inserting the cursor into middle of some text (maybe have it hover over?)
 - Cursor and select lines to copy and paste
@@ -39,6 +40,8 @@ Things to consider:
     - html: what will be placed inside the modal
     - links: All the other tags to link to that have a relation to eachother
 3. Useless information: "this is error code 24"
+4. parse the document first and gather all the keywords, then get them from the server
+5. Oh god, do I need to check if it's valid syntax
 
 Extra stuff if there's time:
 

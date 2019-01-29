@@ -8,7 +8,7 @@ function adjustEditorWindow() {
 }
 
 let codespace = document.querySelector("#codespace");
-let lineNum = document.querySelector("#lineNumber");
+let lineNumers = document.querySelector("#lineNumber");
 let codespaceFocus = false;
 
 // Used to focus on the editor when in use
@@ -66,8 +66,8 @@ function appendToContent(e, key) {
             if (e.ctrlKey || e.metaKey) {
                 location.reload(true);
             } else {
-                lineCol++;
-                lines[lineIndex] += key;
+                let line = lines[lineIndex];
+                lines[lineIndex] = line.substr(0, lineCol) + key + line.substr(lineCol++, line.length);
             }
             break;
         case "Space":
@@ -76,74 +76,132 @@ function appendToContent(e, key) {
             break;
         case "Backspace":
             if (lines.length > 0){                      // first lets make sure we have something to delete
-                if (lines[lineIndex].length <= 0) {     // If we don't have anything there...
-                    if (lines.length == 1){             // check if it's the first line
+                if (lines[lineIndex].length <= 0) {     // If we don't have anything in there...
+                    if (lines.length == 1) {             // check if it's the first line
                         lines[lineIndex] = "";
                     } else {
                         lines.pop();                    // else remove it from lines and the DOM
-                        lineNum.removeChild(lineNum.lastChild);
+                        lineNumers.removeChild(lineNumers.lastChild);
                         codespace.removeChild(codespace.childNodes[lineIndex]);
-                    }  
-                    if (lineIndex > 0){                 // then decrement, but semaphore
+                    }
+
+                    // then decrement, but semaphore
+                    if (lineIndex > 0) {
+                        lineCol = lines[lineIndex - 1].length;  // Also, if there is somthing there, just jump to that point
                         lineIndex--;
                     }
-                } else {
-                    lines[lineIndex] = lines[lineIndex].substr(0, lines[lineIndex].length - 1);
-                    if (lineCol - 1 >= 0) { lineCol--; }
+
+                } else if (lineCol == 0 && lineIndex != 0) {    // If we're at the very front of a line...
+                    lineCol = lines[lineIndex - 1].length;      // Set the lineCol to the previous line
+                    lines[lineIndex - 1] += lines[lineIndex];   // add whatever we had on the previous line
+                    lines.splice(lineIndex, 1);                 // Cut the old line out
+
+                    // Update the DOM
+                    lineNumers.removeChild(lineNumers.lastChild);   
+                    codespace.removeChild(codespace.childNodes[lineIndex--]);
+                }
+                else {
+                    // Otherwise, we just remove the letter in the current position
+                    if (lineCol - 1 >= 0) {
+                        lineCol--;
+                        let line = lines[lineIndex];
+                        lines[lineIndex] = line.substr(0, lineCol) + line.substr(lineCol + 1, line.length);
+                    }
                 }
             }
             break;
         case "Enter":
-            lines.push("");
+            let lineVal = lines[lineIndex];
+
+            // take care of adding a new line in the right location
+            if (lineIndex == 0){
+                lines.splice(lineIndex++, 0, "");
+            } else {
+                lines.splice(++lineIndex, 0, "");
+            }
+
+            // Once the line has been made, put the appropriate text on each one
+            lines[lineIndex] = lineVal.substring(lineCol, lineVal.length);
+            lines[lineIndex - 1] = lineVal.substring(0, lineCol);
+            renderLine(lineIndex - 1);
 
             // Add a new line to the codespace
             let el = document.createElement("p");
-            codespace.appendChild(el);
+            if (codespace.childNodes.length > 1 && lineIndex != codespace.childNodes.length){
+                codespace.insertBefore(el, codespace.childNodes[lineIndex]);
+            } else {
+                codespace.appendChild(el);
+            }
 
-            lineIndex++;
-            lineCol = 0;
             // Then add the line number
             let el2 = document.createElement("span");
-            el2.innerHTML = (lineIndex + 1) + "<br>"
-            lineNum.appendChild(el2);
+            el2.innerHTML = codespace.childElementCount + "<br>"
+            lineNumers.appendChild(el2);
+
+            lineCol = 0;
 
             break;
         case "Tab":
             // lines[lineIndex] += "&#9;";
             break;
         case "Shift":
-            break;
         case "CapsLock":
-            break;
         case "Meta":
-            break;
         case "Alt":
+        case "End":
             break;
         case "ArrowUp":
-            if (lineIndex - 1 >= 0) { lineIndex--; }
+            if (lineIndex - 1 >= 0) {   // Bounds check
+                lineIndex--;
+                if (lineCol == lines[lineIndex + 1].length) {
+                    let prevLineLen = lines[lineIndex].length;
+                    let newLineLen = lines[lineIndex + 1].length;
+                    lineCol = prevLineLen < newLineLen ? prevLineLen : newLineLen;
+                }
+            }
             break;
         case "ArrowDown":
-            if (lineIndex + 1 < lines.length) { lineIndex++; }
+            if (lineIndex + 1 < lines.length) {  // Bounds check
+                lineIndex++;
+                if (lineCol == lines[lineIndex - 1].length) {
+                    let prevLineLen = lines[lineIndex].length;
+                    let newLineLen = lines[lineIndex - 1].length;
+                    lineCol = prevLineLen < newLineLen ? prevLineLen : newLineLen;
+                }
+            }
             break;
         case "ArrowLeft":
+            if (e.ctrlKey || e.metaKey) {
+                lineCol = 0;
+            }
             if (lineCol - 1 >= 0) { lineCol--; }
             break;
         case "ArrowRight":
+            if (e.ctrlKey || e.metaKey) {
+                lineCol = lines[lineIndex].length;
+            }
             if (lineCol + 1 <= lines[lineIndex].length) { lineCol++; }
             break;
         default:
-            lineCol++;
-            lines[lineIndex] += key;
+            // insert the character into the line at the correct position
+            let line = lines[lineIndex];
+            lines[lineIndex] = line.substr(0, lineCol) + key + line.substr(lineCol++, line.length);
             break;
     }
 
     // To finish, just attach each line as a div with a break
-    codespace.childNodes[lineIndex].innerHTML = `<span>${markify(lines[lineIndex], rules)}</span>`;
+    renderLine(lineIndex);
 
     calculateIndent(lineIndex, lineCol, lines[lineIndex].length);
     setCursor();
 
     setTimeout(() => { typing = false }, 100);
+}
+
+// Renders a line given the index in the set of 'lines' (corresponding to the child in codespace DOM)
+// Adds marking as well
+function renderLine(index) {
+    codespace.childNodes[index].innerHTML = `<span>${markify(lines[index], rules)}</span>`;
 }
 
 // Returns a html ready line for each occurance
