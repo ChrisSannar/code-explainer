@@ -40,7 +40,6 @@ var lineHeight = 0;
 function calculateIndent(lineIndex, lineCol, charCount) {
     // If we actually have a space to work with
     if (codespace.childNodes[lineIndex].childNodes[0]){
-        console.log(lineIndex, lineCol);
 
         // Calculate how far to move the cursor depending on the width of each character and height of each line
         if (charCount > 0) {
