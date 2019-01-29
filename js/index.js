@@ -61,17 +61,18 @@ window.addEventListener("keydown", function(e) {
 function appendToContent(e, key) {
     typing = true;
 
-    let step = 1;
     switch (key) {
         case "r":
             if (e.ctrlKey || e.metaKey) {
                 location.reload(true);
             } else {
+                lineCol++;
                 lines[lineIndex] += key;
             }
             break;
         case "Space":
             lines[lineIndex] += " ";
+            lineCol++;
             break;
         case "Backspace":
             if (lines.length > 0){                      // first lets make sure we have something to delete
@@ -79,52 +80,56 @@ function appendToContent(e, key) {
                     if (lines.length == 1){             // check if it's the first line
                         lines[lineIndex] = "";
                     } else {
-                        lines.pop();                    // else remove it from lines
+                        lines.pop();                    // else remove it from lines and the DOM
+                        lineNum.removeChild(lineNum.lastChild);
+                        codespace.removeChild(codespace.childNodes[lineIndex]);
                     }  
                     if (lineIndex > 0){                 // then decrement, but semaphore
                         lineIndex--;
                     }
                 } else {
                     lines[lineIndex] = lines[lineIndex].substr(0, lines[lineIndex].length - 1);
+                    if (lineCol - 1 >= 0) { lineCol--; }
                 }
             }
-            step = -1;
             break;
         case "Enter":
             lines.push("");
+
+            // Add a new line to the codespace
+            let el = document.createElement("p");
+            codespace.appendChild(el);
+
             lineIndex++;
+            lineCol = 0;
+            // Then add the line number
+            let el2 = document.createElement("span");
+            el2.innerHTML = (lineIndex + 1) + "<br>"
+            lineNum.appendChild(el2);
+
             break;
         case "Tab":
-            step = 0;
             // lines[lineIndex] += "&#9;";
             break;
         case "Shift":
-            step = 0;
             break;
         case "CapsLock":
-            step = 0;
             break;
         case "Meta":
-            step = 0;
             break;
         case "Alt":
-            step = 0;
             break;
         case "ArrowUp":
-            step = 0;
+            if (lineIndex - 1 >= 0) { lineIndex--; }
             break;
         case "ArrowDown":
-            step = 0;
+            if (lineIndex + 1 < lines.length) { lineIndex++; }
             break;
         case "ArrowLeft":
-            // step = -1;
-            step = 0;
-            lineCol--;
+            if (lineCol - 1 >= 0) { lineCol--; }
             break;
         case "ArrowRight":
-            // step = 1;
-            step = 0;
-            lineCol++;
+            if (lineCol + 1 <= lines[lineIndex].length) { lineCol++; }
             break;
         default:
             lineCol++;
@@ -133,23 +138,9 @@ function appendToContent(e, key) {
     }
 
     // To finish, just attach each line as a div with a break
-    codespace.innerHTML = "";
-    lineNum.innerHTML = "";
+    codespace.childNodes[lineIndex].innerHTML = `<span>${markify(lines[lineIndex], rules)}</span>`;
 
-    // *** Should we render the entire DOM over and over again?
-    let num = 1;
-
-    lines.forEach(line => {
-        let el = document.createElement("p");
-        el.innerHTML = `<span>${markify(line, rules)}</span>`;
-        codespace.appendChild(el);
-
-        let el2 = document.createElement("span");
-        el2.innerHTML = num++ + "<br>";
-        lineNum.appendChild(el2);
-    });
-
-    indentCursor(lineIndex, step);
+    calculateIndent(lineIndex, lineCol, lines[lineIndex].length);
     setCursor();
 
     setTimeout(() => { typing = false }, 100);
