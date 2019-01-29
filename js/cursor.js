@@ -33,27 +33,29 @@ function removeCursor() {
     */
 }
 
-var divider = 0;
+var widthDivider = 0;
+var heightDivider = 0;
 var charWidth = 0;
-function indentCursor(lineIndex, step, charInLine) {
-    console.log(charInLine);
-    if (divider + step >= 0){
-        divider += step;
-    }
-    // cursorLeftIndent += step;
-    // cursorspace.style.marginLeft = cursorLeftIndent + "em";
+var lineHeight = 0;
+function calculateIndent(lineIndex, lineCol, charCount) {
+    // If we actually have a space to work with
     if (codespace.childNodes[lineIndex].childNodes[0]){
-        // cursorspace.style.marginLeft = codespace.childNodes[lineIndex].childNodes[0].getBoundingClientRect().width + "px";
-        console.log(charWidth, divider);
-        if (charWidth){
-            // cursorspace.style.marginLeft = (charWidth * divider) + "px";
-            cursorspace.style.marginLeft = (charWidth * charInLine) + "px";
-        }
-        if (divider > 0) {
-            charWidth = codespace.childNodes[lineIndex].childNodes[0].getBoundingClientRect().width / divider;
-            // console.log(codespace.childNodes[lineIndex].childNodes[0], charWidth, divider);
-        }
-    }
+        console.log(lineIndex, lineCol);
 
-    // cursorspace.style.marginLeft = codespace.childNodes[lineIndex].childNodes[0].getBoundingClientRect().width + "px";
+        // Calculate how far to move the cursor depending on the width of each character and height of each line
+        if (charCount > 0) {
+            charWidth = codespace.childNodes[lineIndex].childNodes[0].getBoundingClientRect().width / charCount;
+        }
+        if (lineIndex > 0) {
+            lineHeight = codespace.childNodes[lineIndex].childNodes[0].getBoundingClientRect().height / lineIndex;
+        }
+        // The characer width might vary, but the line height will always be the same as placed in "style.css"
+        indentCursor((charWidth * lineCol), (lineIndex * 18));//(lineHeight * lineIndex));
+    }
+}
+
+// Moves the cursor based on margin left/top of the cursorspace
+function indentCursor(left, top) {
+    cursorspace.style.marginLeft = left + "px";
+    cursorspace.style.marginTop = top + "px";
 }
