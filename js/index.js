@@ -44,6 +44,18 @@ function hasCodespaceInAncestry(el) {
     return false;
 }
 
+/*!
+ * Sanitize and encode all HTML in a user-submitted string
+ * (c) 2018 Chris Ferdinandi, MIT License, https://gomakethings.com
+ * @param  {String} str  The user-submitted string
+ * @return {String} str  The sanitized string
+ */
+function sanitizeHTML(str) {
+	var temp = document.createElement('div');
+	temp.textContent = str;
+	return temp.innerHTML;
+};
+
 let lines = [""];
 let lineIndex = 0;
 let lineCol = 0;
@@ -135,7 +147,7 @@ function appendToContent(e, key) {
 
             // Then add the line number
             let el2 = document.createElement("span");
-            el2.innerHTML = codespace.childElementCount + "<br>"
+            el2.innerHTML = sanitizeHTML(codespace.childElementCount) + "<br>"
             lineNumers.appendChild(el2);
 
             lineCol = 0;
@@ -149,25 +161,31 @@ function appendToContent(e, key) {
         case "Meta":
         case "Alt":
         case "End":
+        case "Control":
             break;
         case "ArrowUp":
             if (lineIndex - 1 >= 0) {   // Bounds check
                 lineIndex--;
-                if (lineCol == lines[lineIndex + 1].length) {
-                    let prevLineLen = lines[lineIndex].length;
-                    let newLineLen = lines[lineIndex + 1].length;
-                    lineCol = prevLineLen < newLineLen ? prevLineLen : newLineLen;
-                }
+                // if (lineCol == lines[lineIndex + 1].length) {
+                let prevLineLen = lines[lineIndex].length;
+                let newLineLen = lines[lineIndex + 1].length;
+                lineCol = prevLineLen < newLineLen ? 
+                        (lineCol < prevLineLen ? lineCol : prevLineLen)
+                        : (newLineLen < lineCol ? newLineLen : lineCol);
+                // }
             }
             break;
         case "ArrowDown":
             if (lineIndex + 1 < lines.length) {  // Bounds check
                 lineIndex++;
-                if (lineCol == lines[lineIndex - 1].length) {
+
+                // if (lineCol == lines[lineIndex - 1].length) {
                     let prevLineLen = lines[lineIndex].length;
                     let newLineLen = lines[lineIndex - 1].length;
-                    lineCol = prevLineLen < newLineLen ? prevLineLen : newLineLen;
-                }
+                    lineCol = prevLineLen < newLineLen ? 
+                        (lineCol < prevLineLen ? lineCol : prevLineLen)
+                        : (newLineLen < lineCol ? newLineLen : lineCol);
+                // }
             }
             break;
         case "ArrowLeft":
@@ -201,7 +219,7 @@ function appendToContent(e, key) {
 // Renders a line given the index in the set of 'lines' (corresponding to the child in codespace DOM)
 // Adds marking as well
 function renderLine(index) {
-    codespace.childNodes[index].innerHTML = `<span>${markify(lines[index], rules)}</span>`;
+    codespace.childNodes[index].innerHTML = `<span>${markify(sanitizeHTML(lines[index]), rules)}</span>`;
 }
 
 // Returns a html ready line for each occurance
@@ -254,32 +272,3 @@ function markify(line, rules) {
     // Our resulting line
     return result;
 }
-
-var modalFadeout;
-
-function openModal(index, element) {
-    if (modalFadeout) { clearTimeout(modalFadeout); }
-
-    let rule = rules[index];
-    let rect = element.getBoundingClientRect();
-    let modal = document.querySelector("#modal");
-    // modal.style.visibility = "visible";
-
-    if (modal.style.display == "none") { modal.style.display = "block"; }
-
-    modal.classList.remove("hidden");
-    modal.classList.add("visible");
-    modal.style.left = ((rect.left - (modal.offsetWidth / 2)) + (element.offsetWidth / 2)) + "px";
-    modal.style.top = (20 + rect.top) + "px";
-    modal.innerHTML = `${rule.html}`;
-}
-
-function closeModal() {
-    modalFadeout = setTimeout(function () {
-        let modal = document.querySelector("#modal");
-        // modal.style.visibility = "hidden";
-        modal.classList.remove("visible");
-        modal.classList.add("hidden");
-    }, 300);
-}
-
