@@ -7,7 +7,8 @@ Things to do:
 ~ Set up JSON file of "rules"
     * Parse the JSON file properly
     * Make sure there's no duplicate tags
-- FIX ALL POSSIBILITY OF HTML TAGS BEING INSERTED (use the 'pre' tag?)
+√ FIX ALL POSSIBILITY OF HTML TAGS BEING INSERTED
+    * Do we care about script tags in the modal? Or are we going to check the json rules before?
 - Handle overflow with line limit (happens after ~38 lines)
 - Inserting the cursor into middle of some text (maybe have it hover over?)
 - Cursor and select lines to copy and paste
