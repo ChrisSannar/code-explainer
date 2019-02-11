@@ -1,0 +1,84 @@
+body {
+    background: #1A1A1A;
+    text-align: center;
+    overflow: hidden;
+    padding-bottom: 1em;
+}
+
+.editor {
+    display: flex;
+    flex-direction: row;
+    background: #333333;
+    color: white;
+    font-family: 'Courier New', Courier, monospace;
+    /* font-family: 'Lucida Console', monospace; */
+    width: 800px;
+    height: 95%;
+    margin: auto;
+    overflow: scroll;
+    overflow-x: scroll;
+}
+
+#codespace {
+    text-align: left;
+    margin: 1em;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+    width: 100%;
+    cursor: text;
+    white-space: nowrap;
+}
+
+#cursorspace {
+    position: absolute;
+}
+
+#cursor {
+    width: 1.5px;
+    height: 1.2em;
+    background: rgb(200, 200, 200);
+    display: inline-block;
+}
+
+#codespace > p {
+    margin: 0;
+    /* height: 1.15em; */
+    height: 18px;
+    white-space: pre;
+}
+
+#lineNumber {
+    text-align: right;
+    color: #777777;
+    width: 1em;
+    padding-top: 1.5em;
+    padding-left: 1em;
+    margin-bottom: 1.5em;
+    height: 1.15em;
+}
+
+#modal {
+    /* display: none; */
+    background: white;
+    float: left;
+    position: absolute;
+    width: 20em;
+    min-height: 300px;
+    transition: 0.2s;
+    color: black;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.visible {
+    display: block;
+    /* visibility: visible;
+    opacity: 1;
+    transition: opacity 0.1s linear; */
+}
+
+.hidden {
+    display: none;
+    /* visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.1s, opacity 0.1s linear; */
+}

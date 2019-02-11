@@ -9,12 +9,15 @@ Things to do:
     * Make sure there's no duplicate tags
 √ FIX ALL POSSIBILITY OF HTML TAGS BEING INSERTED
     * Do we care about script tags in the modal? Or are we going to check the json rules before?
-- Handle overflow with line limit (happens after ~38 lines)
+√ Handle overflow with line limit (happens after ~38 lines)
+    * Fix the "x-scroll" issue with cursor
+    * Fix the "y-scroll" issue with cursor
 - Inserting the cursor into middle of some text (maybe have it hover over?)
 - Cursor and select lines to copy and paste
 - Pasting stuff
 - Select things with cursor
 - When a function is declared, have it's call link to its declaration
+- Undo and redo
 - Control codes (set difference for Mac and Windows)
     √ refresh
     * copy
@@ -27,7 +30,7 @@ Things to do:
     * End? (Mac)
     * Control
     * Escape
-    * Any 'Alt' Codes
+    √ Any 'Alt' Codes
     * Function codes (F1, F2, etc...)
 
 Things to consider:
@@ -41,11 +44,12 @@ Things to consider:
     - html: what will be placed inside the modal
     - links: All the other tags to link to that have a relation to eachother
 3. Useless information: "this is error code 24"
-4. parse the document first and gather all the keywords, then get them from the server
-5. Oh god, do I need to check if it's valid syntax
+4. Parse the document first and gather all the keywords, then get them from the server. Not locally
+5. Oh god, do I need to check if it's valid javascript syntax...
 
 Extra stuff if there's time:
 
 - "Grammar Checker": Check spelling for common words (ex: funciton -> function)
 - Get a bunch of people to use it and then start doing data collection.
 - Check if the code compiles and then show errors if it doesn't.
+- Have a select function that can parse what's selected and give some explination
