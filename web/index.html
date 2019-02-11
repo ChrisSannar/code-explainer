@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Code Explainer</title>
+    <style type="text/css" media="screen">
+        #editor { 
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+    </style>
+    <!-- <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script> -->
+</head>
+<body>
+
+<div id="wrap">
+    <div id="editor-wrap">
+        <p></p>
+        <div id="editor">
+function test() {
+    // I'm example code
+    return 0;
+}
+        </div>
+    </div>
+    <div id="display">This is a test</div>
+</div>
+
+<script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+<script>
+    var editor = ace.edit("editor");
+    editor.setOptions({
+        // theme: "ace/theme/idle_fingers",
+        theme: "ace/theme/twilight",
+        showPrintMargin: false
+    });
+    let tokens = {};
+    let rules = {};
+
+    editor.session.setMode("ace/mode/javascript", tokenizeDocument);
+
+    function tokenizeDocument() {
+        let result = [];    // What we're sending out
+
+        // Iterator over the entire document and collect a token for each value
+        var TokenIterator = ace.require("ace/token_iterator").TokenIterator;
+        var tolkIter = new TokenIterator(editor.session, 0, 0);
+        tolkIter.stepForward();
+        while (tolkIter.getCurrentToken()) {
+            let next = tolkIter.getCurrentToken();
+
+            // if we've already pulled the token data, then there's no need to request it again
+            if (!tokens[`${next.type}:${next.value}`]){
+                result.push(next);
+                tokens[`${next.type}:${next.value}`] = next;
+            }
+            tolkIter.stepForward();
+        }
+
+        // Request the rules from the server
+        requestRules(result);
+    }
+
+    function requestRules(tokens) {
+        $.ajax({
+            method: "GET",
+            url: "./get/rules",
+            data: {
+                tokens: tokens
+            },
+            dataType: "JSON"
+        }).done(function(data){
+            parseRules(data);
+        });
+    }
+
+    function parseRules(rules) {
+        console.log(rules);
+    }
+    
+    editor.on('click', function(e) {
+        let pos = e.$pos;
+        let sec = editor.session;
+        let tolk = sec.getTokenAt(pos.row, pos.column);
+        console.log(tolk);
+        if (tolk) {
+            // Set up an observable for the side panel to change it's data once it has the server info
+
+        }
+    });
+
+    editor.on('change', tokenizeDocument);
+
+</script>
+<style>
+    #wrap {
+        align-content: center;
+    }
+    #display {
+        background: #e3e3e3;
+        width: 20%;
+        height: 10em;
+        margin-top: 1em;
+        float: right;
+    }
+    #editor-wrap {
+        height: 1em;
+        max-width: 600px;
+    }
+    #editor {
+        width: 50%;
+        margin: auto;
+        margin-top: 1em;
+    }
+    body {
+        background: black;
+    }
+</style>
+</body>
+</html>
