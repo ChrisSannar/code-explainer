@@ -1,0 +1,26 @@
+[
+    {
+        "tag": "function",
+        "token": "storage.type:function",
+        "html": "<p>This is a function<p>",
+        "links" : ["return"]
+      },
+      {
+        "tag": "semicolon",
+        "token": "punctuation.operator:;",
+        "html": "<p>This is a semicolon<p>",
+        "links" : []
+      },
+      {
+        "tag": "return",
+        "token": "keyword:return",
+        "html": "<p>This is a return statement<p>",
+        "links" : ["function"]
+      },
+      {
+        "tag": "function-name",
+        "token": "entity.name.function:*",
+        "html": "<p>This is a function name<p>",
+        "links" : ["function"]
+      }
+]
