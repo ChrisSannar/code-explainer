@@ -1,6 +1,8 @@
 Things to do:
 
 - Sanatize the html input from the rules
+- Link explinations in rules to other explinations 
+- Set 'code snippets' for the rules.html
 
 Things to consider:
 
@@ -21,6 +23,7 @@ Extra stuff if there's time:
 - Get a bunch of people to use it and then start doing data collection.
 √ Check if the code compiles and then show errors if it doesn't. (done by Ace)
 - Have a select function that can parse a selection and give some explination what might be going on
+- Have rules reference various parts of the code entered (ex. while describing a funciton name, include the function name in the rules);
 
 Thoughts:
 
