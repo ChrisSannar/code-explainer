@@ -16,48 +16,58 @@
 <body>
 
 <div id="wrap">
-    <div id="editor-wrap">
-        <p></p>
-        <div id="editor">
+<div id="editor">
 function test() {
     // I'm example code
     return 0;
 }
-        </div>
+</div>
+    <div id="display">
+        <p>Click on or after a keyword to learn more about it</p>
     </div>
-    <div id="display">This is a test</div>
 </div>
 
 <script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
 <script>
+
+    // set the display height to change when the window changes
+    window.onresize = changeDisplayHeight;
+    function changeDisplayHeight() {
+        document.querySelector("#display").style.height = window.innerHeight + "px";
+    }
+    changeDisplayHeight();
+
+    // Get the editor and settings
     var editor = ace.edit("editor");
     editor.setOptions({
         // theme: "ace/theme/idle_fingers",
         theme: "ace/theme/twilight",
         showPrintMargin: false
     });
+    editor.session.setMode("ace/mode/javascript", tokenizeDocument);
     let tokens = {};
     let rules = {};
 
-    editor.session.setMode("ace/mode/javascript", tokenizeDocument);
-
+    // Goes through the document and tokenizes the whole thing
     function tokenizeDocument() {
         let result = [];    // What we're sending out
 
         // Iterator over the entire document and collect a token for each value
         var TokenIterator = ace.require("ace/token_iterator").TokenIterator;
-        var tolkIter = new TokenIterator(editor.session, 0, 0);
-        tolkIter.stepForward();
-        while (tolkIter.getCurrentToken()) {
-            let next = tolkIter.getCurrentToken();
+        var tokIter = new TokenIterator(editor.session, 0, 0);
+        tokIter.stepForward();
+        while (tokIter.getCurrentToken()) {
+            let next = tokIter.getCurrentToken();
+            // set the line where the token occures
+            next.line = editor.env.document.doc.getLine(tokIter.getCurrentTokenRow());
 
             // if we've already pulled the token data, then there's no need to request it again
             if (!tokens[`${next.type}:${next.value}`]){
                 result.push(next);
                 tokens[`${next.type}:${next.value}`] = next;
             }
-            tolkIter.stepForward();
+            tokIter.stepForward();
         }
 
         // Request the rules from the server
@@ -69,16 +79,21 @@ function test() {
             method: "GET",
             url: "./get/rules",
             data: {
-                tokens: tokens
+                tokens: tokens,
+                lang: editor.getSession().getMode().$id
             },
             dataType: "JSON"
         }).done(function(data){
-            parseRules(data);
+            if (data) {
+                parseRules(data);
+            }
         });
     }
 
-    function parseRules(rules) {
-        console.log(rules);
+    function parseRules(newRules) {
+        Object.keys(newRules).forEach(key => {
+            rules[key] = newRules[key];
+        });
     }
     
     editor.on('click', function(e) {
@@ -87,6 +102,11 @@ function test() {
         let tolk = sec.getTokenAt(pos.row, pos.column);
         console.log(tolk);
         if (tolk) {
+            if (rules[`${tolk.type}:${tolk.value}`]){
+                document.querySelector("#display").innerHTML = rules[`${tolk.type}:${tolk.value}`].html;
+            } else {
+                document.querySelector("#display").innerHTML = "<p>There is no description of this token</p>"
+            }
             // Set up an observable for the side panel to change it's data once it has the server info
 
         }
@@ -97,23 +117,27 @@ function test() {
 </script>
 <style>
     #wrap {
-        align-content: center;
+        display: inline-block;
+        width: 100%;
     }
     #display {
         background: #e3e3e3;
-        width: 20%;
-        height: 10em;
-        margin-top: 1em;
-        float: right;
+        width: 22%;
+        min-height: 100%;
+        margin: auto;
+        margin-top: 4px;
+        margin-right: 15%;
+        padding: 0.5em 1em;
     }
     #editor-wrap {
         height: 1em;
         max-width: 600px;
     }
     #editor {
-        width: 50%;
+        width: 45%;
         margin: auto;
         margin-top: 1em;
+        margin-right: 40%;
     }
     body {
         background: black;

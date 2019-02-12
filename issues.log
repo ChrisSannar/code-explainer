@@ -1,0 +1,12 @@
+Mon Feb 11 14:33:30 MST 2019 - Initial Log
+
+	This is just a homemade log to keep track of what I've been doing with this project. A journal if you will. I primarily will list all the issues I've worked through up until this current day.
+
+Mon Feb 11 14:52:44 MST 2019 - Problem with Finding Rules
+
+	Rules, as I've set up this program to use, are each of the changes that will be used for each of the 'keywords' in current document. The only issue with this is that I'll have to have a unique card for each variable instead of one that can cover all of a single though. How do I fix this? Maybe a second parameter for the rule to check the current line to have that particular bit inside of it. I'll post an answer once I've got it figured out.
+
+Mon Feb 11 21:30:08 MST 2019 - Came up with not the best solution, but one that works
+
+	So what I did was seperate the problem into 2 databases: Constant keywords (like 'return' and 'function') from variable keyworks (like a function parameter or a numeric value). First, we'llry database (constant) which will have the names of the variables as a key. If not found, then we sequentially check the variable database which is based on a regex expression of the line given. If neithefound then it'll send a message to me. There still are many things that need to be worked out, but for now it's a working build... ish.
+
