@@ -1,0 +1,30 @@
+[
+    {
+      "tag": "functionName",
+      "regex" : "function\\s+[a-zA-Z][a-z0-9A-Z]*\\(",
+      "tokenType" : "entity.name.function",
+      "html": "<h2>Function Name</h2><p>This give a name by which to refer the function</p>",
+      "links" : ["function"]
+    },
+    {
+      "tag": "variable",
+      "regex" : ".*",
+      "tokenType" : "identifier",
+      "html": "<p>This is a variable name</p>",
+      "links" : ["let"]
+    },
+    {
+      "tag": "number",
+      "regex" : "\\d",
+      "tokenType" : "constant.numeric",
+      "html": "<h2>Number</h2><br><p>Numbers are what you expect: numeric values</p><p>Anything you can do with ",
+      "links" : []
+    },
+    {
+      "tag": "comment",
+      "regex" : "//\/\/.*",
+      "tokenType" : "comment",
+      "html": "<h2>Comment</h2><p>Comments are simply a way of telling the computer to not read this part of the code.</p><p>Often they are used to describe parts of the code that may be complicated and need an explination, or to summarize what the part of the code does in whole.</p><p>There are primarily two types of comments. The first being a single line comment which begins with '//' and covers the entire line. The second is a multi-line comment which spans many lines and starts with '/*' and ends with '*/'.</p><p>You can learn more about comments <a href=\"#\">here</a></p>",
+      "links" : []
+    }
+  ]

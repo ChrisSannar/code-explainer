@@ -10,3 +10,7 @@ Mon Feb 11 21:30:08 MST 2019 - Came up with not the best solution, but one that 
 
 	So what I did was seperate the problem into 2 databases: Constant keywords (like 'return' and 'function') from variable keyworks (like a function parameter or a numeric value). First, we'llry database (constant) which will have the names of the variables as a key. If not found, then we sequentially check the variable database which is based on a regex expression of the line given. If neithefound then it'll send a message to me. There still are many things that need to be worked out, but for now it's a working build... ish.
 
+Tue Feb 12 16:27:24 MST 2019 - Implemented solution
+
+	So I guess I figured it out. There might be some future bugs, but I think I have a few ways of solving those. One in particular is that the regex only checks if an expression is in the line instead of actually marking where. I suppose I could double up that with the 'index' and 'start' variables inside the program, but we'll address that issue when we get there. Till then, it's getting the database connected and testing that.
+
