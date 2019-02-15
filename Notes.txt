@@ -24,7 +24,6 @@ Extra stuff if there's time:
 √ Check if the code compiles and then show errors if it doesn't. (done by Ace)
 - Have a select function that can parse a selection and give some explination what might be going on
 - Have rules reference various parts of the code entered (ex. while describing a funciton name, include the function name in the rules);
-
-Thoughts:
-
-What am I going to do about making a unique tag for the rule? So far it's been ${<type>:<value>}, both values being pulled from the 'token' Ace returns. Some of these tokens have duplicate types but different values, and others have unique types, but distinct values making the combination of type and value not relevant. I need to find a way to make this unique yet cover each token so we don't have duplicates, but we don't miss other values. Maybe have an extra field that will check the regex of the line that contains it, however we still need to have a unique value.
+- You can link between different keywords using the token iterator till it runs into it.
+- When naming the collections, have a naming convention so you can get it by concating string
+- Have it be "function begin" instead of "Curly Brace"
