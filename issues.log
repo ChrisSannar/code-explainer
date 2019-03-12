@@ -14,3 +14,11 @@ Tue Feb 12 16:27:24 MST 2019 - Implemented solution
 
 	So I guess I figured it out. There might be some future bugs, but I think I have a few ways of solving those. One in particular is that the regex only checks if an expression is in the line instead of actually marking where. I suppose I could double up that with the 'index' and 'start' variables inside the program, but we'll address that issue when we get there. Till then, it's getting the database connected and testing that.
 
+Thu Feb 14 22:27:12 MST 2019 - Got everything working. Including database
+
+	So I was able to get the database finished and connected to the project so that's nice. I guess it's in full functionality right now. All I have to do is work out small bits of it, make it cleaner looking, finish the rules, and then I'm done. Of course theres a billion and one things I can do more, but I want a very basic build finished in the next few weeks so I candeploy and start data collecting. Tis important.
+
+Mon Mar 11 12:08:56 MDT 2019 - Trying to get a new line saved into mongodb
+
+	So there's a bit of a problem... whenever I try to save some html "pre-code" inside mongo (pre-code being a library to format code specifically on the page), it saves it as a string. However when I try to use it in the page, it renders it exactly as it's written, a nice property of the 'pre' tag. I have to find a way to override this or do something proper about it.
+
