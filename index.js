@@ -10,9 +10,14 @@ const logger = require('morgan');
 const favicon = require('serve-favicon');
 const path = require('path');
 const bodyParser = require('body-parser');
+const sanitize = require('sanitize-html');
+
 const MongoClient = require('mongodb').MongoClient;
 // const helmet = require('helmet')
 // let ace = require('ace-builds');
+
+let dbTokens;
+let dbRegex;
 
 let app = express();
 app.use(express.static(`${__dirname}/web`));
@@ -38,172 +43,60 @@ MongoClient.connect(mongoURL, function(err, db) {
 
 
 app.get('/', function (req, res) {
-    res.status(200).sendFile(`${__dirname}/web/index.html`);
+    res.status(200).sendFile(`${__dirname}/web/html/index.html`);
 });
 
 app.get('/get/rules', async function(req, res) {
   if (mongodb) {
     let tokens = req.query.tokens;
 
-    let dbTokens = await mongodb.collection("tokenRules").find({}).toArray();
-    let dbRegex = await mongodb.collection("regexRules").find({}).toArray();
-    
-    // *** TEMP
-    let stubTokenRules = [
-      {
-        "tag": "function",
-        "token" : "storage.type:function",
-        "tokenType" : "storage.type",
-        "tokenValue" : "function",
-        "html": `
-          <h2>Function</h2>
-          <p>Functions are bundles of code that can be run on command. They often take input and return output</p>
-          <p>Learn more about functions <a href="">here</a></p>
-        `,
-        "links" : ["functionName", "return"]
-      },
-      {
-        "tag": "let",
-        "token" : "storage.type:let",
-        "tokenType" : "storage.type",
-        "tokenValue" : "let",
-        "html": "<p>This is let</p>",
-        "links" : []
-      },
-      {
-        "tag": "semicolon",
-        "token" : "punctuation.operator:;",
-        "tokenType" : "punctuation.operator",
-        "tokenValue" : ";",
-        "html": `
-          <h2>Semicolon</h2>
-          <p>This marks the end of a statment inside a javascript file and divides code into different pieces</p>
-        `,
-        "links" : []
-      },
-      {
-        "tag": "return",
-        "token" : "keyword:return",
-        "tokenType" : "keyword",
-        "tokenValue" : "return",
-        "html": `
-          <h2>Return</h2>
-          <p>Placed inside a return statement, 'return' gives output when you call a function.</p>
-        `,
-        "links" : ["function"]
-      },
+    /*
+    if (!dbTokens){
+      dbTokens = await mongodb.collection("tokenRules").find({}).toArray();
+    }
+    /* */
+
+    /* TEMP ***/
+    dbTokens = [
       {
         "tag": "rightParen",
         "token" : "paren.rparen:)",
         "tokenType" : "paren.rparen",
         "tokenValue" : ")",
-        "html": "<p>This is a right parentheses</p>",
-        "links" : ["leftParen"]
+        "html": "<h1>Parentheses</h1><p>Parentheses in javascript are used for 3 primary purposes: </p><ul><li>Function declaration and function calls</li><li>Holding conditions for 'if' or 'else if' statements</li><li>Enforcing an order of execution</li></ul><h2>Functions</h2><p>In this context, parentheses are used in both and declaration and calling of a function.</p>",
+        "links" : ["function", "if"]
       },
-      {
-        "tag": "leftParen",
-        "token" : "paren.lparen:(",
-        "tokenType" : "paren.lparen",
-        "tokenValue" : "(",
-        "html": "<p>This is a left parentheses</p>",
-        "links" : ["rightParen"]
-      },
-      {
-        "tag": "rightCurly",
-        "token" : "paren.rparen:}",
-        "tokenType" : "paren.rparen",
-        "tokenValue" : "}",
-        "html": `
-          <h2>Curly Brace</h2>
-          <p>These braces cut the code into different blocks of execution. They are usually preceded by a 'function' or 'conditional statement' to specify what code to run after a sepecific event.</p>
-        `,
-        "links" : ["leftCurly"]
-      },
-      {
-        "tag": "leftCurly",
-        "token" : "paren.lparen:{",
-        "tokenType" : "paren.lparen",
-        "tokenValue" : "{",
-        "html":  `
-          <h2>Curly Brace</h2>
-          <p>These braces cut the code into different blocks of execution. They are usually preceded by a 'function' or 'conditional statement' to specify what code to run after a sepecific event.</p>
-        `,
-        "links" : ["rightCurly"]
-      },
-      {
-        "tag": "assignment",
-        "token" : "keyword.operator:=",
-        "tokenType" : "keyword.operator",
-        "tokenValue" : "=",
-        "html": "<p>This is an assignment operator</p>",
-        "links" : ["variable"]
-      }
     ];
-    
-    let stubRegexRules = [
+    // ***/
+
+    //*
+    if (!dbRegex){
+      dbRegex = await mongodb.collection("regexRules").find({}).toArray();
+    }
+    /* */
+
+    /* TEMP ***
+    dbRegex = [
       {
         "tag": "functionName",
-        "regex" : "function\\s+[a-zA-Z][a-z0-9A-Z]*\\(",
+        "regex" : /function\s+[a-zA-Z][a-z0-9A-Z]*\(/g,
         "tokenType" : "entity.name.function",
-        "html": `
-          <h2>Function Name</h2>
-          <p>This give a name by which to refer the function</p>
-        `,
+        "html": "<h1>Function Name</h1><p>After the 'function' keyword, the function name is the way we identify and call the function later in the progam. Function names need to begin with a letter, but then can contain letters and numbers afterward.</p><pre><code type=\"javascript\">function name() {\n    // function code\n}\nname(); // the code inside the function is run here</code></pre><p>Once the function name is declared, it can't be changed throughout the rest of the program.</p>",
         "links" : ["function"]
       },
-      {
-        "tag": "variable",
-        "regex" : ".*",
-        "tokenType" : "identifier",
-        "html": "<p>This is a variable name</p>",
-        "links" : ["let"]
-      },
-      {
-        "tag": "number",
-        "regex" : "\\d",
-        "tokenType" : "constant.numeric",
-        "html": `
-          <h2>Number</h2>
-          <br>
-          <p>Numbers are what you expect: numeric values</p>
-          <p>Anything you can do with 
-        `,
-        "links" : []
-      },
-      {
-        "tag": "whiteSpace",
-        "regex" : "\\s",
-        "tokenType" : "text",
-        "html": `
-          <h2>Blank Space</h2>
-        `,
-        "links" : []
-      },
-      {
-        "tag": "comment",
-        "regex" : "",//"\/\/.*",
-        "tokenType" : "comment",
-        "html": `
-          <h2>Comment</h2>
-          <p>Comments are simply a way of telling the computer to not read this part of the code.</p>
-          <p>Often they are used to describe parts of the code that may be complicated and need an explination, or to summarize what the part of the code does in whole.</p>
-          <p>There are primarily two types of comments. The first being a single line comment which begins with "//" and covers the entire line. The second is a multi-line comment which spans many lines and starts with '/*' and ends with ''.</p>
-          <p>You can learn more about comments <a href="#">here</a></p>
-        `,
-        "links" : []
-      }
     ];
+    // ***/
 
     let rules = {};
 
-    // parse each of the tokens recieved
-    // if (tokens){
-      // tokens.forEach(token => {
     if (dbTokens && dbRegex && tokens){
       tokens.forEach(token => {
         let tokenSig = `${token.type}:${token.value}`;
         let found = dbTokens.find(val => val.token == tokenSig);
         if (found) {
+          found.html = sanitize(found.html, {
+            allowedTags: sanitize.defaults.allowedTags.concat([ 'h1', 'h2' ])
+          });  // Just to make sure all our input is squeeky clean
           rules[tokenSig] = found;
         } else { 
           
@@ -216,6 +109,9 @@ app.get('/get/rules', async function(req, res) {
             return result;
           });
           if (found) {
+            found.html = sanitize(found.html, {
+              allowedTags: sanitize.defaults.allowedTags.concat([ 'h1', 'h2' ])
+            });
             rules[tokenSig] = found;
           } else {
             // console.log("Token not found: ", token);
@@ -223,57 +119,6 @@ app.get('/get/rules', async function(req, res) {
         }
       });
     }
-    // ***
-/*
-    try {
-    
-      let rules = {};
-
-      // *** Change this so it pulls the token Rules by key instead of pulling them all
-      // *** is there a way to set a key for each one?
-      let dbTokens = await mongodb.collection("tokenRules").find({}).toArray();
-      let dbRegex = await mongodb.collection("regexRules").find({}).toArray();
-
-      let tokenRules = [];
-      let regexRules = [];
-      // dbTokens.forEach(tok => {
-      //   console.log(tok);
-      //   tokenRules.push(tok);
-      // });
-      // dbRegex.forEach(tok => {
-      //   console.log(tok);
-      //   regexRules.push(tok);
-      // });
-      console.log(dbTokens);
-
-      if (tokens){
-        tokens.forEach(token => {
-          let tokenSig = `${token.type}:${token.value}`;
-          let found = tokenRules.find(val => val.token == tokenSig);
-          if (found) {
-            rules[tokenSig] = found;
-          } else {
-            
-            found = regexRules.find(val => {
-              if (!val.regex){
-                val.tokenType == token.type;
-              }
-              let regy = new RegExp(val.regex, 'g');
-              return regy.test(token.line) && val.tokenType == token.type;
-            });
-            if (found) {
-              rules[tokenSig] = found;
-            } else {
-              console.log("Token not found: ", token);
-            }
-          }
-        });
-      }
-      
-      res.status(200).send(JSON.stringify(rules));
-    } catch (err) {
-      throw err;
-    }*/
     res.status(200).send(JSON.stringify(rules));
   } else {
     res.status(500).send("Unable to access database");
