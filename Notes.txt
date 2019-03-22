@@ -11,6 +11,7 @@ Things to do:
 - Fix the 'new line' problem with the code snippits inside explinations
 - Have a better transition between descriptions
 - Save the users code in the 'local' storage
+- Write a better card for object key/pair values instead of them just being "variables"
 
 Things to consider:
 
@@ -36,3 +37,20 @@ Extra stuff if there's time:
 
 Rules for Tokens:
     
+    The only character able to be passed into a token is '\n'
+    No '\t' characters are allowed. Use 4 spaces instead
+    All links are automaticlaly set to open a new tab
+
+Random:
+
+    Regex for a variable declaration: (?:let|var|const)\s+[a-zA-Z][0-1a-zA-Z]+
+    Keywords to do:
+        var
+        const
+        booleans (true, false)
+        Strings
+        dot notation (obj.x)
+        console.log
+        regexp
+        boolean operators (&&, ||, !, ^, >, <, >=, <=)
+        'document' && 'window'

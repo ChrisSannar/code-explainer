@@ -42,21 +42,30 @@ MongoClient.connect(mongoURL, function(err, db) {
 });
 
 
+app.get('/test', async function (req, res) {
+  if (mongodb){
+    if (!dbTokens){
+      dbTokens = await mongodb.collection("tokenRules").find({}).toArray();
+    }
+    res.status(200).json(dbTokens); 
+  }
+})
+
 app.get('/', function (req, res) {
     res.status(200).sendFile(`${__dirname}/web/html/index.html`);
 });
 
 app.get('/get/rules', async function(req, res) {
   if (mongodb) {
-    let tokens = req.query.tokens;
+    let tokens = JSON.parse(req.query.tokens);
 
-    /*
+    //*
     if (!dbTokens){
       dbTokens = await mongodb.collection("tokenRules").find({}).toArray();
     }
     /* */
 
-    /* TEMP ***/
+    /* TEMP ***
     dbTokens = [
       {
         "tag": "rightParen",
@@ -78,35 +87,40 @@ app.get('/get/rules', async function(req, res) {
     /* TEMP ***
     dbRegex = [
       {
-        "tag": "functionName",
-        "regex" : /function\s+[a-zA-Z][a-z0-9A-Z]*\(/g,
-        "tokenType" : "entity.name.function",
-        "html": "<h1>Function Name</h1><p>After the 'function' keyword, the function name is the way we identify and call the function later in the progam. Function names need to begin with a letter, but then can contain letters and numbers afterward.</p><pre><code type=\"javascript\">function name() {\n    // function code\n}\nname(); // the code inside the function is run here</code></pre><p>Once the function name is declared, it can't be changed throughout the rest of the program.</p>",
-        "links" : ["function"]
+        "tag": "comment",
+        "regex" : "",
+        "tokenType" : "comment",
+        "html": "<h2>Comment</h2><p>Comments are simply a way of telling the computer to not read this part of the code.</p><p>Often they are used to describe parts of the code that may be complicated and need an explination, or to summarize what the part of the code does in whole.</p><p>There are primarily two types of comments. The first being a single line comment which begins with '//' and covers the entire line. The second is a multi-line comment which spans many lines and starts with '/*' and ends with '\*\/'.</p><p>You can learn more about comments <a href=\"#\">here</a></p>",
+        "links" : []
       },
     ];
     // ***/
 
     let rules = {};
 
+    // First make sure we have all our stuff
     if (dbTokens && dbRegex && tokens){
       tokens.forEach(token => {
-        let tokenSig = `${token.type}:${token.value}`;
-        let found = dbTokens.find(val => val.token == tokenSig);
-        if (found) {
+        let tokenSig = `${token.type}:${token.value}`;  // Get the token signature
+        let found = dbTokens.find(val => val.token == tokenSig); // lets see if it's found in the tokens database
+        if (found) {  // If so, then we just stick it in our return result
           found.html = sanitize(found.html, {
             allowedTags: sanitize.defaults.allowedTags.concat([ 'h1', 'h2' ])
           });  // Just to make sure all our input is squeeky clean
           rules[tokenSig] = found;
-        } else { 
+        } else { // Otherwise, we check the regex database
           
           found = dbRegex.find(val => {
-            if (!val.regex){
-              val.tokenType == token.type;
+
+            if (!val.regex){ // If we don't have a regex value, then we just check if the types match
+              return val.tokenType == token.type;
+            } else {
+              // Otherwise we check to see if 
+              let regy = new RegExp(val.regex, 'g');
+              let result = regy.test(token.line) && val.tokenType == token.type;
+              return result;
             }
-            let regy = new RegExp(val.regex, 'g');
-            let result = regy.test(token.line) && val.tokenType == token.type;
-            return result;
+
           });
           if (found) {
             found.html = sanitize(found.html, {
@@ -117,6 +131,7 @@ app.get('/get/rules', async function(req, res) {
             // console.log("Token not found: ", token);
           }
         }
+        /* */
       });
     }
     res.status(200).send(JSON.stringify(rules));
@@ -126,7 +141,7 @@ app.get('/get/rules', async function(req, res) {
 });
 
 app.get('*', function(req, res) {
-  res.status(404).sendFile(`${__dirname}/web/404.html`);
+  res.status(404).sendFile(`${__dirname}/web/html/404.html`);
 });
 
 //start the server
