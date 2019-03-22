@@ -22,3 +22,11 @@ Mon Mar 11 12:08:56 MDT 2019 - Trying to get a new line saved into mongodb
 
 	So there's a bit of a problem... whenever I try to save some html "pre-code" inside mongo (pre-code being a library to format code specifically on the page), it saves it as a string. However when I try to use it in the page, it renders it exactly as it's written, a nice property of the 'pre' tag. I have to find a way to override this or do something proper about it.
 
+Fri Mar 22 12:17:07 MDT 2019 - Still having new line issues
+
+	This kinda extends beyond a "new line" issue, it's with all literall characters, including quotation marks. Not sure what to do about this. Do I parse all the input and change it as it comes in? there has to be a better way...
+
+Fri Mar 22 17:53:58 MDT 2019 - More than 50 parameters per query...
+
+	First of all, I fixed the previous problem by having a "replace" function that would replace ever 'n' character with an actual new line. A quick and dirty fix eh? I know, but it works for now. I'll probably get bit by this technical debt sooner than later, but all I gotta do right now is convince the professors to accept this final projet. Anyway, I have a new problem. I'm not able to query more than 50 tokens using my '/get/rules'. Jquery simply wont let me, so I'm researching for a work around, but for now it's gonna be an issue.
+

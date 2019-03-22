@@ -18,9 +18,33 @@
 <body>
 
 <div id="wrap">
-<div id="editor">
+    <div id="editor">
+
+var p = 'The quick brown fox jumps over the lazy dog. If the dog reacted, was it really lazy?';
+
+var regex = /dog/gi;
+
+console.log(p.replace(regex, 'ferret'));
+// expected output: "The quick brown fox jumps over the lazy ferret. If the ferret reacted, was it really lazy?"
+
+console.log(p.replace('dog', 'monkey'));
+// expected output: "The quick brown fox jumps over the lazy monkey. If the dog reacted, was it really lazy?"
+
+if (!dbTokens){
+    dbTokens = mongodb.collection("tokenRules")
+}
+
+
+let x = {
+    a: true,
+    b: false
+}
+
 function test() {
     // I'm example code
+    /*
+        I'm a TEST
+    */
     let x = 0;
     if (x === 0) {
         return x;
@@ -30,9 +54,14 @@ function test() {
         return 1;
     }
 }
-</div>
-    <div id="display" style="overflow-y:auto; height: 95%;">
-        <p>Click on or after a keyword to learn more about it</p>
+    </div>
+    <div id="side">
+        <div id="display" style="overflow-y:auto;">
+            <p>Click on or after a keyword to learn more about it</p>
+        </div>
+        <div id="review" style="height: 124px;">
+            <p></p>
+        </div>
     </div>
 </div>
 
@@ -40,26 +69,31 @@ function test() {
 <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
 <script>
 
+// history.pushState(null, null, location.href);
+// window.onpopstate = function(event) {
+//     history.go(1);
+// };
+
     const displayDefault = `<p>Click on or after a keyword to learn more about it</p>`;
 
     // set the display height to change when the window changes
     window.onresize = changeDisplayHeight;
     function changeDisplayHeight() {
-        document.querySelector("#display").style.height = window.innerHeight + "px";
+        document.querySelector('#display').style.height = (window.innerHeight - 200) + 'px';
     }
     changeDisplayHeight();
 
     // Get the editor and settings
-    var editor = ace.edit("editor");
+    var editor = ace.edit('editor');
     editor.setOptions({
         // theme: "ace/theme/idle_fingers",
-        theme: "ace/theme/kr_theme",
+        theme: 'ace/theme/kr_theme',
         showPrintMargin: false
     });
 
     // Make a not of avaliable languages in the database to accept others
-    editor.session.setMode("ace/mode/javascript", tokenizeDocument);
-    let tokens = {};
+    editor.session.setMode('ace/mode/javascript', tokenizeDocument);
+    let tokens = [];
     let rules = {};
 
     // Goes through the document and tokenizes the whole thing
@@ -67,7 +101,7 @@ function test() {
         let result = [];    // What we're sending out
 
         // Iterator over the entire document and collect a token for each value
-        var TokenIterator = ace.require("ace/token_iterator").TokenIterator;
+        var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
         var tokIter = new TokenIterator(editor.session, 0, 0);
         tokIter.stepForward();
         while (tokIter.getCurrentToken()) {
@@ -88,14 +122,17 @@ function test() {
     }
 
     function requestRules(tokens) {
+        console.log(tokens);
+        let temp = JSON.stringify(tokens);
         $.ajax({
-            method: "GET",
-            url: "./get/rules",
+            method: 'GET',
+            url: './get/rules',
             data: {
-                tokens: tokens,
+                tokens: temp,
                 lang: editor.getSession().getMode().$id
             },
-            dataType: "JSON"
+            dataType: 'JSON',
+            useQuerystring: true
         }).done(function(data){
             if (data) {
                 parseRules(data);
@@ -115,19 +152,25 @@ function test() {
         let pos = e.$pos;
         let sec = editor.session;
         let tolk = sec.getTokenAt(pos.row, pos.column);
-        let display = document.querySelector("#display");
+        let display = document.querySelector('#display');
         console.log(tolk);
         if (tolk) {
             if (rules[`${tolk.type}:${tolk.value}`]){
                 let newHtml = rules[`${tolk.type}:${tolk.value}`].html;
-                newHtml.replace(/function/g, 'bubbles');
-                display.innerHTML = newHtml;
+
+                // This makes it so a 'new line' can appear inside code segments of explinations
+                display.innerHTML = newHtml.replace(/\\n/g, '\n');
+                newTabLinks(display);
             } else {
-                display.innerHTML = "<p>There is no description of this token:   \"" + tolk.value + "\"</p>";
+                display.innerHTML = `
+                    <p>There is no description of this token:   "${tolk.value}"</p>
+                    <p>Click on or after a keyword to learn more about it</p>
+                `;
             }
             highlightCode();
         } else {
-            display.innerHTML = "<p>Click on or after a keyword to learn more about it</p>";
+            display.innerHTML = `<p>Click on or after a keyword to learn more about it</p>`;
+            
         }
     });
 
@@ -139,6 +182,13 @@ function test() {
 
     editor.on('change', tokenizeDocument);
 
+    // Takes all the links of an element and sets them to open in a new tab
+    function newTabLinks(el) {
+        el.querySelectorAll('a').forEach(link => {
+            link.setAttribute('target', '_blank');
+        });
+    }
+
 </script>
 <link rel="stylesheet" href="../highlight/styles/darkula.css">
 <script src="../highlight/highlight.pack.js"></script>
@@ -148,16 +198,19 @@ function test() {
         width: 100%;
         height: 90%;
     }
-    #display {
+    #side {
         background: #e3e3e3;
         width: 20%;
-        min-height: 100%;
+        min-height: 90%;
         margin: auto;
         margin-top: 4px;
         margin-right: 15%;
         padding: 1.5em 1.5em;
         font-family: 'Fira Sans', sans-serif;
         text-align: left;
+    }
+    #review {
+        background: blue;
     }
     code {
         padding: 0em 1em;
@@ -174,6 +227,7 @@ function test() {
         margin: auto;
         margin-top: 1em;
         margin-right: 39%;
+        overflow: scroll;
     }
     body {
         background: black;
