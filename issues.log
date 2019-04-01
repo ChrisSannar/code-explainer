@@ -30,3 +30,7 @@ Fri Mar 22 17:53:58 MDT 2019 - More than 50 parameters per query...
 
 	First of all, I fixed the previous problem by having a "replace" function that would replace ever 'n' character with an actual new line. A quick and dirty fix eh? I know, but it works for now. I'll probably get bit by this technical debt sooner than later, but all I gotta do right now is convince the professors to accept this final projet. Anyway, I have a new problem. I'm not able to query more than 50 tokens using my '/get/rules'. Jquery simply wont let me, so I'm researching for a work around, but for now it's gonna be an issue.
 
+Mon Apr  1 09:58:45 MDT 2019 - Troubles with cards reading duplicate situations (regex)
+
+	So it turns out that some cards might read eachother a double time over due to the poor regex, but with practice that can be over come by using better regular expressions. It's required me so far to go and make changes to other "rules" but so far I've been successful. We'll just have to wait and see if it'll hold up for the next set of rules. Also I'm considering making a tool that will build the cards for you. I just question: will it be worth the time I put into it as opposed to just making the cards right now with my traditional method? Maybe as an extended feature to promote other people to use the application.
+
