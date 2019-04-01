@@ -1,7 +1,7 @@
 {
   "name": "code-explainer",
   "version": "1.0.0",
-  "main": "",
+  "main": "index.js",
   "style": "",
   "author": {
     "name": "Christopher Sannar",

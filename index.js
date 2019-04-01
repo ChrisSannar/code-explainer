@@ -68,12 +68,12 @@ app.get('/get/rules', async function(req, res) {
     /* TEMP ***
     dbTokens = [
       {
-        "tag": "break",
-        "token" : "keyword:break",
-        "tokenType" : "keyword",
-        "tokenValue" : "break",
-        "html": "<h1>break</h1><p>'break' statements are simply used inside loops to end the looping no matter the circumstance. It works for both types of loops.</p><pre><code type=\"javascript\">for (let i = 1; i < 5; i++) {\n  console.log(i)\n  break;\n}\n// this code prints '1'\nlet temp = 'a';\nwhile (temp == 'a') {\n  temp = 'b';\n  break; // this loop ends here\n}</code></pre><p>It is important to note that a break statement only exits the first loop it is contained within. Additional break statements are needed to exit any outer loops.</p><pre><code type=\"javascript\">for (let i = 0; i < 5; i++) {\n  let temp = 'a';\n  while (temp != 'b') {\n    temp = 'b';\n    break; // the 'while' loop stops\n  }\n  // the 'for' loop doesn't\n}</code></pre><p>Learn more about 'break' statements <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/break\">here</a>.</p>",
-        "links" : ["for", "while", "switch"]
+        "tag": "bracket",
+        "token" : "paren.lparen:[",
+        "tokenType" : "paren.lparen",
+        "tokenValue" : "[",
+        "html": "<h1>Brackets</h1><p>Brackets are used for defining arrays and retrieving data out of them. Arrays are sets of variables that can be any kind of data.</p><pre><code type=\"javascript\">let arr = ['a', 'b'];\n// arr holds both 'a' and 'b'</code></pre><p>To access the different parts of an array, the brackets need to be used with an index that starts count at 0. Any attempt to access an index outside of the array range results in an error.</p><pre><code type=\"javascript\">let arr = [11, 22]\narr[0] // 11\narr[1] // 22\narr[-1] // Error\narr[2] // Error</code></pre><p>Learn more about arrays here <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array\">here</a>.</p>",
+        "links" : []
       },
     ];
     // ***/
@@ -87,14 +87,28 @@ app.get('/get/rules', async function(req, res) {
     /* TEMP ***
     dbRegex = [
       {
-        "tag": "string",
-        "regex" : "",
-        "tokenType" : "string",
-        "html": "<h1>String</h1><p>Strings are a combination of characters and one of the <a href=\"https://developer.mozilla.org/en-US/docs/Glossary/Primitive\">primitive data types</a> in javascript. Strings can represent any set of text from any language depending on your browser/computer settings.</p><p>Strings are generally defined by a wrapping of quotation marks (\" \") or apostrophes (' '). Anything inside of these markers is considered part of the String.</p><pre><code type=\"javascript\">let demo = \"I'm a String!\";\ndemo = 'Me too!';</code></pre><p>There are many operations and functions that you can do to change a String, however the most common is concatenation using the \"+\" operator. Any other javascript type that is concatenated is converted first into a String type and then added on.</p><pre><code type=\"javascript\">let x = \"Stringy\" + 123;\nconsole.log(x): // prints \"Stringy123\"</code></pre><p>Learn more about Strings <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String\">here</a></p>",
+        "tag": "comparisonOperators",
+        "regex" : "(&{2}|\\|{2}|!)",
+        "tokenType" : "keyword.operator",
+        "html": "<h1>Comparison Operators</h1><p>Paired with boolean values, these are used to perform logical operations in your code. There are only 3 logical operators in javascript: && (AND), || (OR), ! (NOT).</p><pre><code type=\"javascript\">true && false; // false\ntrue || false // true\n!true; // false</code></pre><p>The result of these operations can be divised using a <a href=\"https://cdn-images-1.medium.com/max/1600/1*SX5-E0EOlfb-HfuttEblHw.png\">truth table<a/>.</p><p>Learn more about logical operations <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators\">here</a>.</p>",
         "links" : []
       },
     ];
     // ***/
+
+    /*
+    dbRegex = [
+      {
+        "tag": "relationOperators",
+        "regex" : "(<=|>=|<|>)",
+        "tokenType" : "keyword.operator",
+        "html": "<h1>Relation Operators</h1><p>There are a total of 4 relation operators and each have an equivilant pair. They are as follows: greater than (>), less than (<), greater than or equal to (>=), and less than or equal to(<=).</p><pre><code type=\"javascript\">4 > 3 // true\n4 < 3 // false\n4 >= 4 // true\n3 <= 4 // true</code></pre><p>Learn more about relation operations <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Relational_operators\">here</a>.</p>",
+        "links" : []
+      },
+    ];
+    */
+
+    // <h2>Assignment Operators</h2><p>Javascript also has a shorthand for performing numerical operations on self assigned variables. They follow the same shorthand as the 6 basic operations as well as string concatenation.</p><pre><code type=\"javascript\">let x = 1;\nx += 3; // x == 4\nx *= 3; // x == 12\nlet temp = \"test\";\ntemp += \"ed\"; // temp == \"tested\"</code></pre><h2></h2><p></p>
 
     let rules = {};
 
