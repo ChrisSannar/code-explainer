@@ -13,8 +13,6 @@ const bodyParser = require('body-parser');
 const sanitize = require('sanitize-html');
 
 const MongoClient = require('mongodb').MongoClient;
-// const helmet = require('helmet')
-// let ace = require('ace-builds');
 
 let dbTokens;
 let dbRegex;
@@ -87,26 +85,14 @@ app.get('/get/rules', async function(req, res) {
     /* TEMP ***
     dbRegex = [
       {
-        "tag": "comparisonOperators",
-        "regex" : "(&{2}|\\|{2}|!)",
+        "tag": "equalityOperators",
+        "regex" : "(==|===|!==|===)",
         "tokenType" : "keyword.operator",
-        "html": "<h1>Comparison Operators</h1><p>Paired with boolean values, these are used to perform logical operations in your code. There are only 3 logical operators in javascript: && (AND), || (OR), ! (NOT).</p><pre><code type=\"javascript\">true && false; // false\ntrue || false // true\n!true; // false</code></pre><p>The result of these operations can be divised using a <a href=\"https://cdn-images-1.medium.com/max/1600/1*SX5-E0EOlfb-HfuttEblHw.png\">truth table<a/>.</p><p>Learn more about logical operations <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Logical_Operators\">here</a>.</p>",
+        "html": "<h1>Equality Operators</h1><p>Equality operators compare only if the paried values are identical or not. They are as follows: equal (==), not equal (!=), identical (===), and not identical (!===).</p><pre><code type=\"javascript\">let a = 0;\nlet b = 0;\na == b // true\na != b // false</code></pre><p>The primary difference between the '==' and the '===' operator is that '===' checks type with comparison.</p><pre><code type=\"javascript\">0 == '0' // true\n0 === '0' // false\n0 === 0 // true</code></pre><p>Learn more about equality operations <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Equality\">here</a>.</p>",
         "links" : []
       },
     ];
     // ***/
-
-    /*
-    dbRegex = [
-      {
-        "tag": "relationOperators",
-        "regex" : "(<=|>=|<|>)",
-        "tokenType" : "keyword.operator",
-        "html": "<h1>Relation Operators</h1><p>There are a total of 4 relation operators and each have an equivilant pair. They are as follows: greater than (>), less than (<), greater than or equal to (>=), and less than or equal to(<=).</p><pre><code type=\"javascript\">4 > 3 // true\n4 < 3 // false\n4 >= 4 // true\n3 <= 4 // true</code></pre><p>Learn more about relation operations <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Relational_operators\">here</a>.</p>",
-        "links" : []
-      },
-    ];
-    */
 
     // <h2>Assignment Operators</h2><p>Javascript also has a shorthand for performing numerical operations on self assigned variables. They follow the same shorthand as the 6 basic operations as well as string concatenation.</p><pre><code type=\"javascript\">let x = 1;\nx += 3; // x == 4\nx *= 3; // x == 12\nlet temp = \"test\";\ntemp += \"ed\"; // temp == \"tested\"</code></pre><h2></h2><p></p>
 
@@ -159,7 +145,7 @@ app.get('*', function(req, res) {
 });
 
 //start the server
-if (!process.env.PORT) { process.env.PORT = 8082 }
+if (!process.env.PORT) { process.env.PORT = 8080 }
 if (!process.env.IP) { process.env.IP = "0.0.0.0" }
 const server = app.listen(process.env.PORT, process.env.IP, 511, function() {
   console.log(`Server listening on port ${process.env.IP}:${process.env.PORT}`);
