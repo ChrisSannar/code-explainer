@@ -1,19 +1,25 @@
-Things to do:
+Things to do v1:
 
 √ Sanatize the html input from the rules
-- Link explinations in rules to other explinations
-    * Have it retrieve it from the backend using a single token 'GET'
 √ Set 'code snippets' for the rules.html
-- Have an error message if we don't have complete code
 - Have a 'rating' bar at the bottom of each explination asking if it was a good definition
     * This is just for now to get a better use of the code
 - Write up the README and include instructions on how to write the rules
 √ Fix the 'new line' problem with the code snippits inside explinations
 - Have a better transition between descriptions
+√ Fix the 'GET' limit problem
+    * Maybe it's only when I start it up insead of inserting?
+
+v2:
+- Link explinations in rules to other explinations
+    * Have it retrieve it from the backend using a single token 'GET'
+- Have an error message if we don't have complete code
 - Save the users code in the 'local' storage as a cookie
 - Write a better card for an object key/pair values instead of them just being "variables"
-- Fix the 'GET' limit problem
-    * Maybe it's only when I start it up insead of inserting?
+- favicon, node middleware, proper version control
+
+v3:
+- Have highlighting parse and explain further
 
 Things to consider:
 
@@ -47,10 +53,9 @@ Random:
 
     Regex for a variable declaration: (?:let|var|const)\s+[a-zA-Z][0-1a-zA-Z]+
     Keywords to do:
-        Arrays
         ---
         errors
-        include '^' in 
+        include '^' in Boolean operators
         ternary operator
         switch/case/default;
         arrow functions
@@ -61,4 +66,5 @@ Random:
         regexp
         'document' && 'window'
         quasi string (`)
+        spread operator (...)
         extended libraries (Math, etc.)

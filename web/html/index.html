@@ -18,172 +18,150 @@
 <body>
 
 <div id="wrap">
-    <div id="editor">
-var fruits = ['Apple', 'Banana'];
-var first = fruits[0];
-<!-- 
-var p = 'The quick brown fox jumps over the lazy dog. If the dog reacted, was it really lazy?';
 
-var regex = /dog/gi;
+<div class="header">
+    <h3 class="header-title">Code Explainer</h3>
+    <p class="version">v1.0.1 Beta</p>
+    <select name="lang" id="lang-select">
+        <option value="Javascript">Javascript</option>
+    </select>
+</div>
 
-if (!dbTokens){
-    dbTokens = mongodb.collection("tokenRules")
-}
+<div id="editor">
+// Insert your code here!
+</div>
 
-const x = {
-    a: true,
-    b: false
-}
-
-function test() {
-    // I'm example code
-    /*
-        I'm a TEST
-    */
-    let x = 0;
-    if (x === 0) {
-        return x;
-    } else if (x == 1){
-        return 0;
-    } else {
-        return 1;
-    }
-} -->
-
+<div id="side">
+    <div id="display" style="overflow-y:auto;">
+        <p>Click on or after a keyword to learn more about it</p>
     </div>
-    <div id="side">
-        <div id="display" style="overflow-y:auto;">
-            <h1>WARNING: THIS SITE IS STILL IN PRODUCTION</h1>
-        </div>
-        <div id="review" style="height: 124px;">
-            <p></p>
-        </div>
+    <div id="review" style="height: 0px;">
+        <h3></h3>
     </div>
+</div>
+
 </div>
 
 <script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 <script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
 <script>
 
-// history.pushState(null, null, location.href);
-// window.onpopstate = function(event) {
-//     history.go(1);
-// };
+const displayDefault = `<p>Click on or after a keyword to learn more about it</p>`;
 
-    const displayDefault = `<p>Click on or after a keyword to learn more about it</p>`;
+// set the display height to change when the window changes
+window.onresize = changeDisplayHeight;
+function changeDisplayHeight() {
+    // document.querySelector('#display').style.height = (window.innerHeight - 200) + 'px';
+    document.querySelector('#display').style.height = (window.innerHeight - 70) + 'px';
+}
+changeDisplayHeight();
 
-    // set the display height to change when the window changes
-    window.onresize = changeDisplayHeight;
-    function changeDisplayHeight() {
-        document.querySelector('#display').style.height = (window.innerHeight - 200) + 'px';
-    }
-    changeDisplayHeight();
+// Get the editor and settings
+var editor = ace.edit('editor');
+editor.setOptions({
+    // theme: "ace/theme/idle_fingers",
+    theme: 'ace/theme/kr_theme',
+    showPrintMargin: false
+});
 
-    // Get the editor and settings
-    var editor = ace.edit('editor');
-    editor.setOptions({
-        // theme: "ace/theme/idle_fingers",
-        theme: 'ace/theme/kr_theme',
-        showPrintMargin: false
-    });
+// Make a not of avaliable languages in the database to accept others
+editor.session.setMode('ace/mode/javascript', tokenizeDocument);
+let tokens = [];
+let rules = {};
 
-    // Make a not of avaliable languages in the database to accept others
-    editor.session.setMode('ace/mode/javascript', tokenizeDocument);
-    let tokens = [];
-    let rules = {};
+// Goes through the document and tokenizes the whole thing
+function tokenizeDocument() {
+    let result = [];    // What we're sending out
 
-    // Goes through the document and tokenizes the whole thing
-    function tokenizeDocument() {
-        let result = [];    // What we're sending out
+    // Iterator over the entire document and collect a token for each value
+    var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
+    var tokIter = new TokenIterator(editor.session, 0, 0);
+    tokIter.stepForward();
+    while (tokIter.getCurrentToken()) {
+        let next = tokIter.getCurrentToken();
+        // set the line where the token occures
+        next.line = editor.env.document.doc.getLine(tokIter.getCurrentTokenRow());
 
-        // Iterator over the entire document and collect a token for each value
-        var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
-        var tokIter = new TokenIterator(editor.session, 0, 0);
+        // if we've already pulled the token data, then there's no need to request it again
+        if (!tokens[`${next.type}:${next.value}`]){
+            result.push(next);
+            tokens[`${next.type}:${next.value}`] = next;
+        }
         tokIter.stepForward();
-        while (tokIter.getCurrentToken()) {
-            let next = tokIter.getCurrentToken();
-            // set the line where the token occures
-            next.line = editor.env.document.doc.getLine(tokIter.getCurrentTokenRow());
-
-            // if we've already pulled the token data, then there's no need to request it again
-            if (!tokens[`${next.type}:${next.value}`]){
-                result.push(next);
-                tokens[`${next.type}:${next.value}`] = next;
-            }
-            tokIter.stepForward();
-        }
-
-        // Request the rules from the server
-        requestRules(result);
     }
 
-    function requestRules(tokens) {
-        console.log(tokens);
-        let temp = JSON.stringify(tokens);
-        $.ajax({
-            method: 'GET',
-            url: './get/rules',
-            data: {
-                tokens: temp,
-                lang: editor.getSession().getMode().$id
-            },
-            dataType: 'JSON',
-            useQuerystring: true
-        }).done(function(data){
-            if (data) {
-                parseRules(data);
-            }
-        });
-    }
+    // Request the rules from the server
+    requestRules(result);
+}
 
-    function parseRules(newRules) {
-        Object.keys(newRules).forEach(key => {
-            rules[key] = newRules[key];
-        });
-    }
-
-    editor.on('click', function(e) {
-        // *** Have a holder there to determine if we should continue.
-        // console.log(editor.session.getAnnotations());
-        let pos = e.$pos;
-        let sec = editor.session;
-        let tolk = sec.getTokenAt(pos.row, pos.column);
-        let display = document.querySelector('#display');
-        console.log(tolk);
-        if (tolk) {
-            if (rules[`${tolk.type}:${tolk.value}`]){
-                let newHtml = rules[`${tolk.type}:${tolk.value}`].html;
-
-                // This makes it so a 'new line' can appear inside code segments of explinations
-                display.innerHTML = newHtml.replace(/\\n/g, '\n');
-                newTabLinks(display);
-            } else {
-                display.innerHTML = `
-                    <p>There is no description of this token:   "${tolk.value}"</p>
-                    <p>Click on or after a keyword to learn more about it</p>
-                `;
-            }
-            highlightCode();
-        } else {
-            display.innerHTML = `<p>Click on or after a keyword to learn more about it</p>`;
-            
+function requestRules(tokens) {
+    console.log(tokens);
+    let temp = JSON.stringify(tokens);
+    $.ajax({
+        method: 'GET',
+        url: './get/rules',
+        data: {
+            tokens: temp,
+            lang: editor.getSession().getMode().$id
+        },
+        dataType: 'JSON',
+        useQuerystring: true
+    }).done(function(data){
+        if (data) {
+            parseRules(data);
         }
     });
+}
 
-    function highlightCode() {
-        document.querySelectorAll('code').forEach((block) => {
-            hljs.highlightBlock(block);
-        });
+function parseRules(newRules) {
+    Object.keys(newRules).forEach(key => {
+        rules[key] = newRules[key];
+    });
+}
+
+editor.on('click', function(e) {
+    // *** Have a holder there to determine if we should continue.
+    // console.log(editor.session.getAnnotations());
+    let pos = e.$pos;
+    let sec = editor.session;
+    let tolk = sec.getTokenAt(pos.row, pos.column);
+    let display = document.querySelector('#display');
+    console.log(tolk);
+    if (tolk) {
+        if (rules[`${tolk.type}:${tolk.value}`]){
+            let newHtml = rules[`${tolk.type}:${tolk.value}`].html;
+
+            // This makes it so a 'new line' can appear inside code segments of explinations
+            display.innerHTML = newHtml.replace(/\\n/g, '\n');
+            newTabLinks(display);
+        } else {
+            display.innerHTML = `
+                <p>There is no description of this token:   "${tolk.value}"</p>
+                <p>Either the keyword isn't part of the javascript language, or an explination hasn't been developed yet.</p>
+                <p>Click on or after a keyword to learn more about it</p>
+            `;
+        }
+        highlightCode();
+    } else {
+        display.innerHTML = `<p>Click on or after a keyword to learn more about it</p>`;
+        
     }
+});
 
-    editor.on('change', tokenizeDocument);
+function highlightCode() {
+    document.querySelectorAll('code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+}
 
-    // Takes all the links of an element and sets them to open in a new tab
-    function newTabLinks(el) {
-        el.querySelectorAll('a').forEach(link => {
-            link.setAttribute('target', '_blank');
-        });
-    }
+editor.on('change', tokenizeDocument);
+
+// Takes all the links of an element and sets them to open in a new tab
+function newTabLinks(el) {
+    el.querySelectorAll('a').forEach(link => {
+        link.setAttribute('target', '_blank');
+    });
+}
 
 </script>
 <link rel="stylesheet" href="../highlight/styles/darkula.css">
@@ -197,16 +175,17 @@ function test() {
     #side {
         background: #e3e3e3;
         width: 20%;
-        min-height: 90%;
+        min-height: 100%;
         margin: auto;
-        margin-top: 4px;
+        margin-top: 0;
         margin-right: 15%;
         padding: 1.5em 1.5em;
         font-family: 'Fira Sans', sans-serif;
         text-align: left;
+        
     }
     #review {
-        background: blue;
+        
     }
     code {
         padding: 0em 1em;
@@ -221,12 +200,52 @@ function test() {
     #editor {
         width: 45%;
         margin: auto;
-        margin-top: 1em;
-        margin-right: 39%;
+        margin-top: 3.5em;
+        margin-right: 39.4%;
         overflow: scroll;
+    }
+    .header {
+        background: #232323;
+        color: #f5f5f5;
+        margin: auto;
+        clear: both;
+        width: 71%;
+        height: 2.6em;
+        display: flex;
+        font-family: 'Fira Sans', sans-serif;
+        box-shadow: 0px 1px 0.5em #2f2f2f;
+    }
+    .header-title {
+        margin: 0; 
+        padding-top: 0.5em;
+        padding-left: 1em;
+    }
+    .version {
+        margin: 0;
+        padding-top: 0.7em;
+        padding-left: 0.4em;
+        color: #777777;
+    }
+    select {
+        -webkit-appearance: none;
+    }
+    #lang-select {
+        padding: 0.2em;
+        padding-left: 0.5em;
+        margin-left: 30em;
+        height: 2em;
+        margin-top: 0.3em;
+        border-radius: 2px;
+        width: 11em;
+        text-align: center;
+        font-size: 14px;
+        border-color: #0b0a09;
+        background: #0b0a09;
+        color: #f5f5f5;
     }
     body {
         background: black;
+        margin-top: 0;
     }
 </style>
 </body>
