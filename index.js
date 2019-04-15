@@ -19,8 +19,8 @@ let dbRegex;
 
 let app = express();
 app.use(express.static(`${__dirname}/web`));
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true })); // for parsing 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing 
 // app.use(logger("short"));
 
 //use the middleware
@@ -139,6 +139,18 @@ app.get('/get/rules', async function(req, res) {
     res.status(500).send("Unable to access database");
   }
 });
+
+app.post('/feedback', function(req, res) {
+  if (mongodb){
+    mongodb.collection("javascriptFeedback").insert(req.body, function (err, resp) {
+      if (err) {
+        res.status(500).send("ERR");
+        throw err;
+      }
+      res.status(200).send("OK");
+    });
+  }
+})
 
 app.get('*', function(req, res) {
   res.status(404).sendFile(`${__dirname}/web/html/404.html`);

@@ -4,19 +4,27 @@ Things to do v1:
 √ Set 'code snippets' for the rules.html
 - Have a 'rating' bar at the bottom of each explination asking if it was a good definition
     * This is just for now to get a better use of the code
+    * Have it just be a 'feedback' button with a modal
 - Write up the README and include instructions on how to write the rules
+    * Look up how to do 'markdown' as in README.md <--
 √ Fix the 'new line' problem with the code snippits inside explinations
-- Have a better transition between descriptions
 √ Fix the 'GET' limit problem
     * Maybe it's only when I start it up insead of inserting?
+- Just have another mock language at the top (change collection name)
+√ Fix design on big screen with zoom (use bootstrap)
+- Clean up explinations (better grammar)
 
 v2:
+- Have a better transition between descriptions
 - Link explinations in rules to other explinations
     * Have it retrieve it from the backend using a single token 'GET'
 - Have an error message if we don't have complete code
 - Save the users code in the 'local' storage as a cookie
+    * Might cause the GET error
 - Write a better card for an object key/pair values instead of them just being "variables"
-- favicon, node middleware, proper version control
+- Favicon, node middleware, proper version control
+- Have a copy icon for your code to bring it over
+- Have sanitize only allow certian words
 
 v3:
 - Have highlighting parse and explain further
@@ -52,9 +60,12 @@ Rules for Tokens:
 Random:
 
     Regex for a variable declaration: (?:let|var|const)\s+[a-zA-Z][0-1a-zA-Z]+
-    Keywords to do:
+    Keywords to do: (Everything that can be listed in the "code" part of a card, give it a card)
+        console.log
+        function parameters
         ---
         errors
+        of
         include '^' in Boolean operators
         ternary operator
         switch/case/default;
@@ -62,9 +73,28 @@ Random:
         Objects & object notation
         dot notation (obj.x)
         shift opperations(<<, >>)
-        console.log
         regexp
         'document' && 'window'
         quasi string (`)
         spread operator (...)
         extended libraries (Math, etc.)
+
+Feedback:
+    Use the term "Proof of concept"
+    If you have an error, wait till someone says so and then show the 'feedback' modal (like spellchecking)
+        Have the message to nowhere (for now)
+    Make the slides SUPER brief (have it be more of a life story)
+    "Why didn't you do this?" - "Thats a great challenge"
+    "How keywords have you done?" - "Here is the list of words I have got working
+        "Where did you get that number of keywords?" - "I made a list of keywords"
+    Whatever it is, show confidence (NOT "I didn't get that" YES "I achieved the minimum")
+
+    List out your licences: are they safe/not safe?
+        Include a copy of the MIT licence - in the source code? Just one line
+        Grab the beginning of a bootstrap CDN.
+    Networky enough? They don't need to know more than what they see
+        Classic 3 tier artitecutre
+    Typographically set apart the keywords
+    keep it as a '0' for your version when you're in beta
+    Data collection? Just show them some random chart. "I looked up let 21 times!"
+        Chart.js
