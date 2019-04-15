@@ -82,7 +82,13 @@ feedbackBox = $('#feedback').dialog({
           feedbackBox.dialog( "close" );
         }
     }
-})
+});
+
+confirmBox = $("#confirm").dialog({
+    autoOpen: false,
+    width: 200,
+    height: 150
+});
 
 feedbackConfirm = $("#confirm").dialog({
     autoOpen: false,
@@ -195,8 +201,12 @@ function sendReview() {
         if (data) {
             if (data == "OK") {
                 document.querySelector("#feedbackConfirm").innerHTML = "Thanks for contributing!";
+                feedbackBox.dialog('close');
+                confirmBox.dialog('open');
             } else {
-                document.querySelector("#feedbackConfirm").innerHTML = "There was an error processing your request.";
+                document.querySelector("#feedbackConfirm").innerHTML = "There was an error sending the feedback. Please try again.";
+                feedbackBox.dialog('close');
+                confirmBox.dialog('open');
             }
         }
     });
