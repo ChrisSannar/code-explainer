@@ -1,84 +1,83 @@
 body {
-    background: #1A1A1A;
     text-align: center;
     overflow: hidden;
     padding-bottom: 1em;
+    background: black;
+    margin-top: 0;
 }
-
-.editor {
-    display: flex;
-    flex-direction: row;
-    background: #333333;
-    color: white;
-    font-family: 'Courier New', Courier, monospace;
-    /* font-family: 'Lucida Console', monospace; */
-    width: 800px;
-    height: 95%;
+.header {
+    background: #232323;
+    color: #f5f5f5;
     margin: auto;
-    overflow: scroll;
-    overflow-x: scroll;
+    clear: both;
+    width: 75%;
+    display: flex;
+    align-items: baseline;
+    font-family: 'Fira Sans', sans-serif;
+    box-shadow: 0px 1px 0.5em #2f2f2f;
 }
-
-#codespace {
+.header * {
+    margin: 0.7em 0.2em;
+}
+.header-title {
+    margin-left: 0.5em;
+}
+#lang-select {
+    -webkit-appearance: none;
+    margin-left: auto;
+    margin-right: 1em;
+    padding: 0.2em;
+    padding-left: 0.5em;
+    height: 2em;
+    border-radius: 2px;
+    width: 11em;
+    font-size: 14px;
+    border-color: #0b0a09;
+    background: #0b0a09;
+    color: #f5f5f5;
+}
+#wrap {
+    display: flex;
+    width: 75%;
+}
+#editor { 
+    position: absolute;
+    top: 4em;
+    right: 0;
+    bottom: 0;
+    left: 13%;
+    width: 50%;
+}
+#side {
+    position: absolute;
+    background: #e3e3e3;
+    width: 20%;
+    min-height: 100%;
+    top: 3em;
+    left: 63%;
+    right: 0;
+    bottom: 0;
+    padding: 1.5em 1.5em;
+    font-family: 'Fira Sans', sans-serif;
     text-align: left;
-    margin: 1em;
-    margin-top: 1.5em;
-    margin-bottom: 1em;
-    width: 100%;
-    cursor: text;
-    white-space: nowrap;
 }
-
-#cursorspace {
-    position: absolute;
-}
-
-#cursor {
-    width: 1.5px;
-    height: 1.2em;
-    background: rgb(200, 200, 200);
-    display: inline-block;
-}
-
-#codespace > p {
-    margin: 0;
-    /* height: 1.15em; */
-    height: 18px;
-    white-space: pre;
-}
-
-#lineNumber {
-    text-align: right;
-    color: #777777;
-    width: 1em;
-    padding-top: 1.5em;
-    padding-left: 1em;
+#feedbackButton {
     margin-bottom: 1.5em;
-    height: 1.15em;
+    padding: 0.5em 1em;
+    border-radius: 3px;
+    background: #0b0a09;
+    color: #f5f5f5;
 }
-
-#modal {
-    /* display: none; */
-    background: white;
-    float: left;
-    position: absolute;
-    width: 20em;
-    min-height: 300px;
-    transition: 0.2s;
-    color: black;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+#feedbackForm {
+    text-align: left;
 }
-
-.visible {
-    display: block;
-    /* visibility: visible;
-    opacity: 1;
-    transition: opacity 0.1s linear; */
+#feedbackBody {
+    padding: 0.5em;
+    margin: 0.5em 0;
+    resize: none;
 }
-
-.hidden {
-    display: none;
-    /* visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s 0.1s, opacity 0.1s linear; */
+code {
+    padding: 0em 1em;
+    border-radius: 5px;
+    overflow-x: auto;
 }
