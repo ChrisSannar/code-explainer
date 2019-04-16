@@ -30,5 +30,12 @@
     "path": "^0.12.7",
     "sanitize-html": "^1.20.0",
     "serve-favicon": "^2.5.0"
+  },
+  "keywords": [
+    "example",
+    "heroku"
+  ],
+  "engines": {
+    "node": "10.x"
   }
 }

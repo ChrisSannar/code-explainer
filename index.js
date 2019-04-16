@@ -56,12 +56,7 @@ app.get('/test', async function(req, res) {
   if (mongodb){
 
     let temp = await mongodb.collection("test").find({}).toArray();
-
     res.status(200).send(JSON.stringify(temp));
-    
-    // temp = await mongodb.collection("test").find({});
-    // console.log(temp);
-    // temp.then(wat => console.log("WAT", wat));
   }
 });
 
