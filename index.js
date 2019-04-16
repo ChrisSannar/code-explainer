@@ -47,49 +47,15 @@ let currentLang;
 
 app.get('/get/rules/:lang', async function(req, res) {
 
-  // console.log(lang, currentLang);
-
   if (mongodb) {
     let tokens = JSON.parse(req.query.tokens);
     let lang = req.params.lang;
-    //*
     if (!dbTokens){
       dbTokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
     }
-    /* */
-
-    /* TEMP ***
-    dbTokens = [
-      {
-        "tag": "print",
-        "token" : "storage.type:console",
-        "tokenType" : "storage.type",
-        "tokenValue" : "console",
-        "html": "<h1>Console</h1><p>This keyword is used for debugging purposes to see what values are held at the time it's called. Any value can be passed inside, even null or undefined values.</p><pre><code type=\"javascript\">console.log(2 + 2); // prints 4\nconsole.log('testing'); // prints 'testing'\nlet temp;\nconsole.log(temp); // prints 'undefined'</code></pre><p>To access the console right click on the page and select the 'inspect' option. From there click on the 'console' tab and the results of the operation will be printed there.</p><p>Learn more about the browser console <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/console\">here</a>.</p>",
-        "links" : []
-      },
-    ];
-    // ***/
-
-    //*
     if (!dbRegex){
       dbRegex = await mongodb.collection(lang + "RegexRules").find({}).toArray();
     }
-
-    // lang = currentLang;
-    /* */
-
-    /* TEMP ***
-    dbRegex = [
-      {
-        "tag": "functionParam",
-        "regex" : "",
-        "tokenType" : "variable.parameter",
-        "html": "<h1>Function Parameter</h1><p>Parameters are variables that are passed into a function from outside its scope. They hold the same values and operations as they would outside the function.</p><pre><code type=\"javascript\">function temp(param1, param2) {\n  console.log(param1 + param2); // this will print 3\n}\n temp(1, 3);</code></pre><p>Learn more about function parameters <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#Function_parameters\">here</a>.</p>",
-        "links" : []
-      },
-    ];
-    // ***/
 
     let rules = {};
     // First make sure we have all our stuff
@@ -125,7 +91,6 @@ app.get('/get/rules/:lang', async function(req, res) {
             // console.log("Token not found: ", token);
           }
         }
-        /* */
       });
     }
     res.status(200).send(JSON.stringify(rules));
