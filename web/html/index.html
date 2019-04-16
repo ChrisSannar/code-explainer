@@ -13,8 +13,9 @@
 <div class="header">
     <h3 class="header-title">Code Explainer</h3>
     <p class="version">Beta</p>
-    <select name="lang" id="lang-select">
-        <option value="Javascript">Javascript</option>
+    <select name="lang" id="lang-select" onchange="changeLanguage(this.value)">
+        <option value="javascript">Javascript</option>
+        <!-- <option value="python">Python</option> -->
     </select>
 </div>
     
@@ -59,6 +60,7 @@ function changeDisplayHeight() {
 changeDisplayHeight();
 
 // Get the editor and settings
+var currentLang = 'javascript';
 var editor = ace.edit('editor');
 editor.setOptions({
     // theme: "ace/theme/idle_fingers",
@@ -67,10 +69,11 @@ editor.setOptions({
 });
 
 // Make a not of avaliable languages in the database to accept others
-editor.session.setMode('ace/mode/javascript', tokenizeDocument);
+editor.session.setMode('ace/mode/' + currentLang, tokenizeDocument);
 let tokens = [];
 let rules = {};
 
+// The feedback box for each token
 feedbackBox = $('#feedback').dialog({
     autoOpen: false,
     height: 350,
@@ -84,20 +87,21 @@ feedbackBox = $('#feedback').dialog({
     }
 });
 
+// The confirm box after feedback has been sent
 confirmBox = $("#confirm").dialog({
-    autoOpen: false,
-    width: 200,
-    height: 150
-});
-
-feedbackConfirm = $("#confirm").dialog({
     autoOpen: false,
     height: 150,
     width: 200,
     close: function () {
         feedbackConfirm.dialog("close");
     }
-})
+});
+
+// Changes the language on the page
+function changeLanguage(lang) {
+    currentLang = lang;
+    editor.session.setMode('ace/mode/' + currentLang, tokenizeDocument);
+}
 
 // Goes through the document and tokenizes the whole thing
 function tokenizeDocument() {
@@ -121,14 +125,14 @@ function tokenizeDocument() {
     }
 
     // Request the rules from the server
-    requestRules(result);
+    requestRules(result, currentLang);
 }
 
-function requestRules(tokens) {
+function requestRules(tokens, lang) {
     let temp = JSON.stringify(tokens);
     $.ajax({
         method: 'GET',
-        url: './get/rules',
+        url: './get/rules/' + lang,
         data: {
             tokens: temp,
             lang: editor.getSession().getMode().$id
@@ -152,9 +156,13 @@ editor.on('click', function(e) {
     let pos = e.$pos;
     let sec = editor.session;
     let tolk = sec.getTokenAt(pos.row, pos.column);
+    console.log(tolk);
     if (tolk) {
-        if (rules[`${tolk.type}:${tolk.value}`]){
-            let newHtml = rules[`${tolk.type}:${tolk.value}`].html;
+        let rule = rules[`${tolk.type}:${tolk.value}`];
+        if (rule){
+            let newHtml = rule.html;
+
+            sendStat({ tag: rule.tag });
 
             // This makes it so a 'new line' can appear inside code segments of explinations
             display.innerHTML = newHtml.replace(/\\n/g, '\n') + addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
@@ -200,11 +208,11 @@ function sendReview() {
     }).done(function(data){
         if (data) {
             if (data == "OK") {
-                document.querySelector("#feedbackConfirm").innerHTML = "Thanks for contributing!";
+                document.querySelector("#confirmBox").innerHTML = "Thanks for contributing!";
                 feedbackBox.dialog('close');
                 confirmBox.dialog('open');
             } else {
-                document.querySelector("#feedbackConfirm").innerHTML = "There was an error sending the feedback. Please try again.";
+                document.querySelector("#confirmBox").innerHTML = "There was an error sending the feedback. Please try again.";
                 feedbackBox.dialog('close');
                 confirmBox.dialog('open');
             }
@@ -224,6 +232,14 @@ editor.on('change', tokenizeDocument);
 function newTabLinks(el) {
     el.querySelectorAll('a').forEach(link => {
         link.setAttribute('target', '_blank');
+    });
+}
+
+function sendStat(tag) {
+    $.ajax({
+        method: 'POST',
+        url: './stat',
+        data: tag
     });
 }
 

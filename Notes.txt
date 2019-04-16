@@ -2,19 +2,28 @@ Things to do v1:
 
 √ Sanatize the html input from the rules
 √ Set 'code snippets' for the rules.html
-- Have a 'rating' bar at the bottom of each explination asking if it was a good definition
+√ Have a 'rating' bar at the bottom of each explination asking if it was a good definition
     * This is just for now to get a better use of the code
     * Have it just be a 'feedback' button with a modal
-- Write up the README and include instructions on how to write the rules
+√ Write up the README and include instructions on how to write the rules
     * Look up how to do 'markdown' as in README.md <--
 √ Fix the 'new line' problem with the code snippits inside explinations
 √ Fix the 'GET' limit problem
     * Maybe it's only when I start it up insead of inserting?
 - Just have another mock language at the top (change collection name)
+    * Have a database of language names?
 √ Fix design on big screen with zoom (use bootstrap)
 - Clean up explinations (better grammar)
+√ Do some "data collection"
+    * Just have a database collect how often a tag was used
+- DEPLOY
 
 v2:
+- Turn off mobile version
+- Build a "Language" collection
+    * Have it hold both the language, and the values to add onto the language
+- Add a default page if javascript is off
+- Build a card/rule constructor for them to code on their own
 - Have a better transition between descriptions
 - Link explinations in rules to other explinations
     * Have it retrieve it from the backend using a single token 'GET'
@@ -61,11 +70,10 @@ Random:
 
     Regex for a variable declaration: (?:let|var|const)\s+[a-zA-Z][0-1a-zA-Z]+
     Keywords to do: (Everything that can be listed in the "code" part of a card, give it a card)
-        console.log
-        function parameters
         ---
         errors
         of
+        undefined/null
         include '^' in Boolean operators
         ternary operator
         switch/case/default;
@@ -85,7 +93,7 @@ Feedback:
         Have the message to nowhere (for now)
     Make the slides SUPER brief (have it be more of a life story)
     "Why didn't you do this?" - "Thats a great challenge"
-    "How keywords have you done?" - "Here is the list of words I have got working
+    "How many keywords have you done?" - "Here is the list of words I have got working"
         "Where did you get that number of keywords?" - "I made a list of keywords"
     Whatever it is, show confidence (NOT "I didn't get that" YES "I achieved the minimum")
 

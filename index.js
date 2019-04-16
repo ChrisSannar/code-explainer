@@ -39,38 +39,33 @@ MongoClient.connect(mongoURL, function(err, db) {
   mongodb = db;
 });
 
-
-app.get('/test', async function (req, res) {
-  if (mongodb){
-    if (!dbTokens){
-      dbTokens = await mongodb.collection("tokenRules").find({}).toArray();
-    }
-    res.status(200).json(dbTokens); 
-  }
-})
-
 app.get('/', function (req, res) {
     res.status(200).sendFile(`${__dirname}/web/html/index.html`);
 });
 
-app.get('/get/rules', async function(req, res) {
+let currentLang;
+
+app.get('/get/rules/:lang', async function(req, res) {
+
+  // console.log(lang, currentLang);
+
   if (mongodb) {
     let tokens = JSON.parse(req.query.tokens);
-
+    let lang = req.params.lang;
     //*
     if (!dbTokens){
-      dbTokens = await mongodb.collection("tokenRules").find({}).toArray();
+      dbTokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
     }
     /* */
 
     /* TEMP ***
     dbTokens = [
       {
-        "tag": "bracket",
-        "token" : "paren.lparen:[",
-        "tokenType" : "paren.lparen",
-        "tokenValue" : "[",
-        "html": "<h1>Brackets</h1><p>Brackets are used for defining arrays and retrieving data out of them. Arrays are sets of variables that can be any kind of data.</p><pre><code type=\"javascript\">let arr = ['a', 'b'];\n// arr holds both 'a' and 'b'</code></pre><p>To access the different parts of an array, the brackets need to be used with an index that starts count at 0. Any attempt to access an index outside of the array range results in an error.</p><pre><code type=\"javascript\">let arr = [11, 22]\narr[0] // 11\narr[1] // 22\narr[-1] // Error\narr[2] // Error</code></pre><p>Learn more about arrays here <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array\">here</a>.</p>",
+        "tag": "print",
+        "token" : "storage.type:console",
+        "tokenType" : "storage.type",
+        "tokenValue" : "console",
+        "html": "<h1>Console</h1><p>This keyword is used for debugging purposes to see what values are held at the time it's called. Any value can be passed inside, even null or undefined values.</p><pre><code type=\"javascript\">console.log(2 + 2); // prints 4\nconsole.log('testing'); // prints 'testing'\nlet temp;\nconsole.log(temp); // prints 'undefined'</code></pre><p>To access the console right click on the page and select the 'inspect' option. From there click on the 'console' tab and the results of the operation will be printed there.</p><p>Learn more about the browser console <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/console\">here</a>.</p>",
         "links" : []
       },
     ];
@@ -78,26 +73,25 @@ app.get('/get/rules', async function(req, res) {
 
     //*
     if (!dbRegex){
-      dbRegex = await mongodb.collection("regexRules").find({}).toArray();
+      dbRegex = await mongodb.collection(lang + "RegexRules").find({}).toArray();
     }
+
+    // lang = currentLang;
     /* */
 
     /* TEMP ***
     dbRegex = [
       {
-        "tag": "equalityOperators",
-        "regex" : "(==|===|!==|===)",
-        "tokenType" : "keyword.operator",
-        "html": "<h1>Equality Operators</h1><p>Equality operators compare only if the paried values are identical or not. They are as follows: equal (==), not equal (!=), identical (===), and not identical (!===).</p><pre><code type=\"javascript\">let a = 0;\nlet b = 0;\na == b // true\na != b // false</code></pre><p>The primary difference between the '==' and the '===' operator is that '===' checks type with comparison.</p><pre><code type=\"javascript\">0 == '0' // true\n0 === '0' // false\n0 === 0 // true</code></pre><p>Learn more about equality operations <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Comparison_Operators#Equality\">here</a>.</p>",
+        "tag": "functionParam",
+        "regex" : "",
+        "tokenType" : "variable.parameter",
+        "html": "<h1>Function Parameter</h1><p>Parameters are variables that are passed into a function from outside its scope. They hold the same values and operations as they would outside the function.</p><pre><code type=\"javascript\">function temp(param1, param2) {\n  console.log(param1 + param2); // this will print 3\n}\n temp(1, 3);</code></pre><p>Learn more about function parameters <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#Function_parameters\">here</a>.</p>",
         "links" : []
       },
     ];
     // ***/
 
-    // <h2>Assignment Operators</h2><p>Javascript also has a shorthand for performing numerical operations on self assigned variables. They follow the same shorthand as the 6 basic operations as well as string concatenation.</p><pre><code type=\"javascript\">let x = 1;\nx += 3; // x == 4\nx *= 3; // x == 12\nlet temp = \"test\";\ntemp += \"ed\"; // temp == \"tested\"</code></pre><h2></h2><p></p>
-
     let rules = {};
-
     // First make sure we have all our stuff
     if (dbTokens && dbRegex && tokens){
       tokens.forEach(token => {
@@ -150,7 +144,19 @@ app.post('/feedback', function(req, res) {
       res.status(200).send("OK");
     });
   }
-})
+});
+
+app.post('/stat', async function (req, res) {
+  if (mongodb) {
+    let stats = await mongodb.collection("javascriptStats").find({tag: req.body.tag}).toArray()    
+    if (stats.length > 0) {
+      mongodb.collection("javascriptStats").update({tag: req.body.tag}, { $inc: { click: 1}})
+    } else {
+      mongodb.collection("javascriptStats").insert({tag: req.body.tag, click: 1})
+    }
+    res.status(200).send("OK");
+  }
+});
 
 app.get('*', function(req, res) {
   res.status(404).sendFile(`${__dirname}/web/html/404.html`);
@@ -161,7 +167,7 @@ if (!process.env.PORT) { process.env.PORT = 8080 }
 if (!process.env.IP) { process.env.IP = "0.0.0.0" }
 const server = app.listen(process.env.PORT, process.env.IP, 511, function() {
   console.log(`Server listening on port ${process.env.IP}:${process.env.PORT}`);
-})
+});
 
 //server close functions
 function gracefulShutdown() {
@@ -170,7 +176,7 @@ function gracefulShutdown() {
   server.close(function() {
     console.log('Shutdown complete');
     process.exit(0);
-  })
+  });
 }
 
 process.on('SIGTERM', gracefulShutdown);
