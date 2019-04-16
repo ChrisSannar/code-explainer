@@ -31,19 +31,39 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing
 // app.use(favicon(`${__dirname}/web/img/favicon.ico`))
 
 var mongodb;
-var mongoURL = "mongodb://localhost:27017/code-explainer";
 
-MongoClient.connect(mongoURL, function(err, db) {
+// var mongoURL = "mongodb://localhost:27017/code-explainer";
+// var mongoURL = "mongodb+srv://chris:Racecar27!@code-explainer-nfphc.mongodb.net";
+const mongoURL = "mongodb+srv://chris:Racecar27!@code-explainer-nfphc.mongodb.net/test?retryWrites=true";
+// const mongoURL = "mongodb://chris:Racecar27!@code-explainer-shard-00-00-nfphc.mongodb.net:27017,code-explainer-shard-00-01-nfphc.mongodb.net:27017,code-explainer-shard-00-02-nfphc.mongodb.net:27017/test?ssl=true&replicaSet=code-explainer-shard-0&authSource=admin&retryWrites=true"
+
+const client = new MongoClient(mongoURL, { useNewUrlParser: true });
+
+client.connect(mongoURL, async function(err, client) {
   if(err) { throw err; }
   console.log("MongoDB connected");
-  mongodb = db;
+  mongodb = client.db("code-explainer");
+  // let temp = await client.db("code-explainer").collection("test").find({}).toArray();
+  // console.log(temp);
 });
+
 
 app.get('/', function (req, res) {
     res.status(200).sendFile(`${__dirname}/web/html/index.html`);
 });
 
-let currentLang;
+app.get('/test', async function(req, res) {
+  if (mongodb){
+
+    let temp = await mongodb.collection("test").find({}).toArray();
+
+    res.status(200).send(JSON.stringify(temp));
+    
+    // temp = await mongodb.collection("test").find({});
+    // console.log(temp);
+    // temp.then(wat => console.log("WAT", wat));
+  }
+});
 
 app.get('/get/rules/:lang', async function(req, res) {
 

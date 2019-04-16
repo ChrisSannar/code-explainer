@@ -19,6 +19,8 @@ Things to do v1:
 - DEPLOY
 
 v2:
+- Deploy properly
+    * Have it on an actual engine
 - Turn off mobile version
 - Build a "Language" collection
     * Have it hold both the language, and the values to add onto the language
