@@ -34,6 +34,8 @@ v2:
 - Favicon, node middleware, proper version control
 - Have a copy icon for your code to bring it over
 - Have sanitize only allow certian words
+- Pull the actual value that we're working with
+- Admin CRUD functionality
 
 v3:
 - Have highlighting parse and explain further
