@@ -31,65 +31,48 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing
 // app.use(favicon(`${__dirname}/web/img/favicon.ico`))
 
 var mongodb;
-var mongoURL = "mongodb://localhost:27017/code-explainer";
 
-MongoClient.connect(mongoURL, function(err, db) {
+var mongoURL = "mongodb://localhost:27017/code-explainer";
+// var mongoURL = "mongodb+srv://chris:Racecar27!@code-explainer-nfphc.mongodb.net";
+// const mongoURL = "mongodb+srv://chris:Racecar27!@code-explainer-nfphc.mongodb.net/test?retryWrites=true";
+// const mongoURL = "mongodb://chris:Racecar27!@code-explainer-shard-00-00-nfphc.mongodb.net:27017,code-explainer-shard-00-01-nfphc.mongodb.net:27017,code-explainer-shard-00-02-nfphc.mongodb.net:27017/test?ssl=true&replicaSet=code-explainer-shard-0&authSource=admin&retryWrites=true"
+
+const client = new MongoClient(mongoURL, { useNewUrlParser: true });
+
+client.connect(mongoURL, async function(err, client) {
   if(err) { throw err; }
   console.log("MongoDB connected");
-  mongodb = db;
+  mongodb = client.db("code-explainer");
+  // let temp = await client.db("code-explainer").collection("test").find({}).toArray();
+  // console.log(temp);
 });
+
 
 app.get('/', function (req, res) {
     res.status(200).sendFile(`${__dirname}/web/html/index.html`);
 });
 
-let currentLang;
+app.get('/test', async function(req, res) {
+  if (mongodb){
+
+    let temp = await mongodb.collection("javascriptTokenRules").find({}).toArray();
+    let temp2 = await mongodb.collection("javascriptRegexRules").find({}).toArray();
+    
+    res.status(200).send(JSON.stringify(temp));
+  }
+});
 
 app.get('/get/rules/:lang', async function(req, res) {
-
-  // console.log(lang, currentLang);
 
   if (mongodb) {
     let tokens = JSON.parse(req.query.tokens);
     let lang = req.params.lang;
-    //*
     if (!dbTokens){
       dbTokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
     }
-    /* */
-
-    /* TEMP ***
-    dbTokens = [
-      {
-        "tag": "print",
-        "token" : "storage.type:console",
-        "tokenType" : "storage.type",
-        "tokenValue" : "console",
-        "html": "<h1>Console</h1><p>This keyword is used for debugging purposes to see what values are held at the time it's called. Any value can be passed inside, even null or undefined values.</p><pre><code type=\"javascript\">console.log(2 + 2); // prints 4\nconsole.log('testing'); // prints 'testing'\nlet temp;\nconsole.log(temp); // prints 'undefined'</code></pre><p>To access the console right click on the page and select the 'inspect' option. From there click on the 'console' tab and the results of the operation will be printed there.</p><p>Learn more about the browser console <a href=\"https://developer.mozilla.org/en-US/docs/Web/API/console\">here</a>.</p>",
-        "links" : []
-      },
-    ];
-    // ***/
-
-    //*
     if (!dbRegex){
       dbRegex = await mongodb.collection(lang + "RegexRules").find({}).toArray();
     }
-
-    // lang = currentLang;
-    /* */
-
-    /* TEMP ***
-    dbRegex = [
-      {
-        "tag": "functionParam",
-        "regex" : "",
-        "tokenType" : "variable.parameter",
-        "html": "<h1>Function Parameter</h1><p>Parameters are variables that are passed into a function from outside its scope. They hold the same values and operations as they would outside the function.</p><pre><code type=\"javascript\">function temp(param1, param2) {\n  console.log(param1 + param2); // this will print 3\n}\n temp(1, 3);</code></pre><p>Learn more about function parameters <a href=\"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions#Function_parameters\">here</a>.</p>",
-        "links" : []
-      },
-    ];
-    // ***/
 
     let rules = {};
     // First make sure we have all our stuff
@@ -125,7 +108,6 @@ app.get('/get/rules/:lang', async function(req, res) {
             // console.log("Token not found: ", token);
           }
         }
-        /* */
       });
     }
     res.status(200).send(JSON.stringify(rules));
@@ -163,9 +145,10 @@ app.get('*', function(req, res) {
 });
 
 //start the server
-if (!process.env.PORT) { process.env.PORT = 8080 }
+if (!process.env.PORT) { process.env.PORT = 5000 }
 if (!process.env.IP) { process.env.IP = "0.0.0.0" }
-const server = app.listen(process.env.PORT, process.env.IP, 511, function() {
+app.set('port', (process.env.PORT || 5000 ))
+const server = app.listen(app.get('port'), process.env.IP, 511, function() {
   console.log(`Server listening on port ${process.env.IP}:${process.env.PORT}`);
 });
 
