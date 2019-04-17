@@ -143,7 +143,7 @@ app.get('*', function(req, res) {
 });
 
 //start the server
-if (!process.env.PORT) { process.env.PORT = 8080 }
+if (!process.env.PORT) { process.env.PORT = 5000 }
 if (!process.env.IP) { process.env.IP = "0.0.0.0" }
 const server = app.listen(process.env.PORT, process.env.IP, 511, function() {
   console.log(`Server listening on port ${process.env.IP}:${process.env.PORT}`);
