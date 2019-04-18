@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Code Explainer</title>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="../css//jquery-ui.min.css">
+    <!-- <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script> -->
+</head>
+<body>
+    
+<div id="wrap">
+
+<h1>Build</h1>
+
+<div id="side">
+    <div id="display" style="overflow-y:auto;">
+        
+    </div>
+</div>
+
+</div>
+
+<script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+<script>
+
+// Goes through the document and tokenizes the whole thing
+function tokenizeDocument() {
+    let result = [];    // What we're sending out
+
+    // Iterator over the entire document and collect a token for each value
+    var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
+    var tokIter = new TokenIterator(editor.session, 0, 0);
+    tokIter.stepForward();
+    while (tokIter.getCurrentToken()) {
+        let next = tokIter.getCurrentToken();
+        // set the line where the token occures
+        next.line = editor.env.document.doc.getLine(tokIter.getCurrentTokenRow());
+
+        // if we've already pulled the token data, then there's no need to request it again
+        if (!tokens[`${next.type}:${next.value}`]){
+            result.push(next);
+            tokens[`${next.type}:${next.value}`] = next;
+        }
+        tokIter.stepForward();
+    }
+
+    // Request the rules from the server
+    requestRules(result, currentLang);
+}
+
+function highlightCode() {
+    document.querySelectorAll('code').forEach((block) => {
+        hljs.highlightBlock(block);
+    });
+}
+
+</script>
+<link rel="stylesheet" href="../highlight/styles/darkula.css">
+<script src="../highlight/highlight.pack.js"></script>
+</body>
+</html>

@@ -9,19 +9,20 @@
 </head>
 <body>
 
-    
+
 <div class="header">
     <h3 class="header-title">Code Explainer</h3>
     <p class="version">Beta</p>
     <select name="lang" id="lang-select" onchange="changeLanguage(this.value)">
         <option value="javascript">Javascript</option>
+        <option value="python">Python</option>
     </select>
 </div>
     
 <div id="wrap">
 
 <div id="editor">
-// Insert your code here!
+# Insert your code here!
 </div>
 
 <div id="side">
@@ -156,6 +157,7 @@ editor.on('click', function(e) {
     let pos = e.$pos;
     let sec = editor.session;
     let tolk = sec.getTokenAt(pos.row, pos.column);
+    console.log(tolk);
     if (tolk) {
         let rule = rules[`${tolk.type}:${tolk.value}`];
         if (rule){
@@ -164,13 +166,13 @@ editor.on('click', function(e) {
             // sending the statistics
             sendStat({ tag: rule.tag });
 
-            // This makes it so a 'new line' can appear inside code segments of explinations
+            // This makes it so a 'new line' can appear inside code segments of explanations
             display.innerHTML = newHtml.replace(/\\n/g, '\n') + addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
             newTabLinks(display);
         } else {
             display.innerHTML = `
                 <p>There is no description of this token:   "${tolk.value}"</p>
-                <p>Either the keyword isn't part of the javascript language, or an explination hasn't been developed yet.</p>
+                <p>Either the keyword isn't part of the javascript language, or an explanation hasn't been developed yet.</p>
                 <p>Click on or after a keyword to learn more about it</p>
             `;
         }
