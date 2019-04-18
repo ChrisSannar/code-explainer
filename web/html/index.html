@@ -22,7 +22,7 @@
 <div id="wrap">
 
 <div id="editor">
-# Insert your code here!
+y = 0
 </div>
 
 <div id="side">
@@ -105,6 +105,7 @@ function changeLanguage(lang) {
 // Goes through the document and tokenizes the whole thing
 function tokenizeDocument() {
     let result = [];    // What we're sending out
+    tokens = {};
 
     // Iterator over the entire document and collect a token for each value
     var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
@@ -157,7 +158,7 @@ editor.on('click', function(e) {
     let pos = e.$pos;
     let sec = editor.session;
     let tolk = sec.getTokenAt(pos.row, pos.column);
-    console.log(tolk);
+    console.log(rules);
     if (tolk) {
         let rule = rules[`${tolk.type}:${tolk.value}`];
         if (rule){
