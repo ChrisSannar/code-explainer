@@ -68,18 +68,57 @@ app.get('/test', async function(req, res) {
   }
 });
 
+let prevLang = "";
+
 app.get('/get/rules/:lang', async function(req, res) {
 
   if (mongodb) {
     let tokens = JSON.parse(req.query.tokens);
     let lang = req.params.lang;
-    console.log(lang);
-    if (!dbTokens){
+    console.log(tokens);
+
+    /*
+    if (!dbTokens || prevLang != lang){
+      console.log("GET");
       dbTokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
     }
-    if (!dbRegex){
+    /* */
+
+    //*
+
+    let dbTokens = [
+      {
+        "tag": "variable",
+        "regex" : "\w+",
+        "tokenType" : "identifier",
+        "html": "<h1>Variable</h1><p>This definition hasn't been implemented yet</p>",
+      }
+    ]
+
+    /* */
+
+    /*
+    if (!dbRegex || prevLang != lang){
+      console.log(lang + "RegexRules");
       dbRegex = await mongodb.collection(lang + "RegexRules").find({}).toArray();
     }
+    /* */
+
+    //*
+
+    let dbRegex = [
+      {
+        "tag": "variable",
+        "regex" : "\w+",
+        "tokenType" : "identifier",
+        "html": "<h1>Variable</h1><p>This definition hasn't been implemented yet</p>",
+      }
+    ]
+
+    /* */
+
+    // console.log(dbTokens);
+    // console.log(dbRegex);
 
     let rules = {};
     // First make sure we have all our stuff
