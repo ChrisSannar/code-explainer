@@ -52,6 +52,14 @@ app.get('/', function (req, res) {
     res.status(200).sendFile(`${__dirname}/web/html/index.html`);
 });
 
+app.get('/build', function (req, res) {
+  res.status(200).sendFile(`${__dirname}/web/html/build.html`);
+});
+
+app.get('/stats', function (req, res) {
+  res.status(200).sendFile(`${__dirname}/web/html/stats.html`);
+});
+
 app.get('/test', async function(req, res) {
   if (mongodb){
 
@@ -65,6 +73,7 @@ app.get('/get/rules/:lang', async function(req, res) {
   if (mongodb) {
     let tokens = JSON.parse(req.query.tokens);
     let lang = req.params.lang;
+    console.log(lang);
     if (!dbTokens){
       dbTokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
     }

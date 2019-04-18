@@ -75,6 +75,7 @@ Random:
         ---
         errors
         of
+        escape character
         undefined/null
         include '^' in Boolean operators
         ternary operator
