@@ -9,20 +9,20 @@
 </head>
 <body>
 
-    
+
 <div class="header">
     <h3 class="header-title">Code Explainer</h3>
     <p class="version">Beta</p>
     <select name="lang" id="lang-select" onchange="changeLanguage(this.value)">
         <option value="javascript">Javascript</option>
-        <!-- <option value="python">Python</option> -->
+        <option value="python">Python</option>
     </select>
 </div>
     
 <div id="wrap">
 
 <div id="editor">
-// Insert your code here!
+// Insert your code here
 </div>
 
 <div id="side">
@@ -54,7 +54,6 @@ const displayDefault = `<p>Click on or after a keyword to learn more about it</p
 // set the display height to change when the window changes
 window.onresize = changeDisplayHeight;
 function changeDisplayHeight() {
-    // document.querySelector('#display').style.height = (window.innerHeight - 200) + 'px';
     document.querySelector('#display').style.height = (window.innerHeight - 70) + 'px';
 }
 changeDisplayHeight();
@@ -106,6 +105,7 @@ function changeLanguage(lang) {
 // Goes through the document and tokenizes the whole thing
 function tokenizeDocument() {
     let result = [];    // What we're sending out
+    tokens = {};
 
     // Iterator over the entire document and collect a token for each value
     var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
@@ -146,31 +146,33 @@ function requestRules(tokens, lang) {
     });
 }
 
+// parses each of the new rules to add to the already constructed object
 function parseRules(newRules) {
     Object.keys(newRules).forEach(key => {
         rules[key] = newRules[key];
     });
 }
 
+// each time we click in the editor...
 editor.on('click', function(e) {
     let pos = e.$pos;
     let sec = editor.session;
     let tolk = sec.getTokenAt(pos.row, pos.column);
-    console.log(tolk);
     if (tolk) {
         let rule = rules[`${tolk.type}:${tolk.value}`];
         if (rule){
             let newHtml = rule.html;
 
+            // sending the statistics
             sendStat({ tag: rule.tag });
 
-            // This makes it so a 'new line' can appear inside code segments of explinations
+            // This makes it so a 'new line' can appear inside code segments of explanations
             display.innerHTML = newHtml.replace(/\\n/g, '\n') + addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
             newTabLinks(display);
         } else {
             display.innerHTML = `
                 <p>There is no description of this token:   "${tolk.value}"</p>
-                <p>Either the keyword isn't part of the javascript language, or an explination hasn't been developed yet.</p>
+                <p>Either the keyword isn't part of the javascript language, or an explanation hasn't been developed yet.</p>
                 <p>Click on or after a keyword to learn more about it</p>
             `;
         }
@@ -180,8 +182,9 @@ editor.on('click', function(e) {
     }
 });
 
-//<button id="feedbackButton" onClick="openFeedbackModal(${tag})>Feedback</button>
+editor.on('change', tokenizeDocument);
 
+// adds the feedback button to each card
 function addFeedbackButton(tag) {
     return `
         <button id="feedbackButton" onClick="openFeedbackModal('${tag}')">Feedback</button>
@@ -196,6 +199,7 @@ function openFeedbackModal(tag) {
     feedbackBox.dialog('open');
 }
 
+// sends the review from the feedback module to my database
 function sendReview() {
     let feedback = document.querySelector("#feedbackBody").value;
     $.ajax({
@@ -221,12 +225,10 @@ function sendReview() {
 }
 
 function highlightCode() {
-    document.querySelectorAll('code').forEach((block) => {
+    document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightBlock(block);
     });
 }
-
-editor.on('change', tokenizeDocument);
 
 // Takes all the links of an element and sets them to open in a new tab
 function newTabLinks(el) {
@@ -235,6 +237,7 @@ function newTabLinks(el) {
     });
 }
 
+// sends the tag for statistics
 function sendStat(tag) {
     $.ajax({
         method: 'POST',
