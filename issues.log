@@ -8,7 +8,7 @@ Mon Feb 11 14:52:44 MST 2019 - Problem with Finding Rules
 
 Mon Feb 11 21:30:08 MST 2019 - Came up with not the best solution, but one that works
 
-	So what I did was seperate the problem into 2 databases: Constant keywords (like 'return' and 'function') from variable keyworks (like a function parameter or a numeric value). First, we'llry database (constant) which will have the names of the variables as a key. If not found, then we sequentially check the variable database which is based on a regex expression of the line given. If neithefound then it'll send a message to me. There still are many things that need to be worked out, but for now it's a working build... ish.
+	So what I did was seperate the problem into 2 databases: Constant keywords (like 'return' and 'function') from variable keyworks (like a function parameter or a numeric value). First, we'll try database (constant) which will have the names of the variables as a key. If not found, then we sequentially check the variable database which is based on a regex expression of the line given. If neithefound then it'll send a message to me. There still are many things that need to be worked out, but for now it's a working build... ish.
 
 Tue Feb 12 16:27:24 MST 2019 - Implemented solution
 
@@ -33,4 +33,8 @@ Fri Mar 22 17:53:58 MDT 2019 - More than 50 parameters per query...
 Mon Apr  1 09:58:45 MDT 2019 - Troubles with cards reading duplicate situations (regex)
 
 	So it turns out that some cards might read eachother a double time over due to the poor regex, but with practice that can be over come by using better regular expressions. It's required me so far to go and make changes to other "rules" but so far I've been successful. We'll just have to wait and see if it'll hold up for the next set of rules. Also I'm considering making a tool that will build the cards for you. I just question: will it be worth the time I put into it as opposed to just making the cards right now with my traditional method? Maybe as an extended feature to promote other people to use the application.
+
+Wed Apr 17 22:52:15 MDT 2019 - Getting things finished up
+
+	So I've worked out most of the issues. The trouble with duplicates was pretty easy: just have better regex which worked out well. Now I'm getting things deployed, but had some issues with that. Google Cloud was uncooperative so I had to use heroku instead which could have had some improvements, but hey, it's out and working now. Mazel Tov
 
