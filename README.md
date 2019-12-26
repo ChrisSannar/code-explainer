@@ -1,5 +1,5 @@
 # code-explainer
-A online tool for beginner programmers to explain code
+An online tool for beginner programmers to explain code
 
 To run the code locally, navigate to the repository and install the needed dependencies with `npm install` and start the application with `npm start`.
 To run in development mode with nodemon and developer tools, use `npm run dev` instead.

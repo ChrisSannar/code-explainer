@@ -158,7 +158,6 @@ editor.on('click', function(e) {
     let pos = e.$pos;
     let sec = editor.session;
     let tolk = sec.getTokenAt(pos.row, pos.column);
-    console.log(rules);
     if (tolk) {
         let rule = rules[`${tolk.type}:${tolk.value}`];
         if (rule){
@@ -226,7 +225,7 @@ function sendReview() {
 }
 
 function highlightCode() {
-    document.querySelectorAll('code').forEach((block) => {
+    document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightBlock(block);
     });
 }

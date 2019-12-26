@@ -49,23 +49,41 @@ client.connect(mongoURL, async function(err, client) {
 
 
 app.get('/', function (req, res) {
+  if (/mobile/i.test(req.headers['user-agent'])){
+    res.status(200).sendFile(`${__dirname}/web/html/mobile.html`);
+  } else {
     res.status(200).sendFile(`${__dirname}/web/html/index.html`);
+  }
 });
 
 app.get('/build', function (req, res) {
   res.status(200).sendFile(`${__dirname}/web/html/build.html`);
 });
 
-app.get('/stats', function (req, res) {
-  res.status(200).sendFile(`${__dirname}/web/html/stats.html`);
+app.get('/stats', async function (req, res) {
+  try {
+    let stats = await mongodb.collection("javascriptStats").find({}).toArray();
+    // console.log(stats);
+    
+    // res.status(200).json(stats);
+    res.status(200).sendFile(`${__dirname}/web/html/stats.html`);
+  } catch (e) {
+    res.status(500).send(e);
+  }
 });
 
 app.get('/test', async function(req, res) {
-  if (mongodb){
-
-    let temp = await mongodb.collection("test").find({}).toArray();
-    res.status(200).send(JSON.stringify(temp));
+  if (/mobile/i.test(req.headers['user-agent'])){
+    res.send('bad');
   }
+  else {
+    res.send('gud');
+  }
+  // if (mongodb){
+
+  //   let temp = await mongodb.collection("test").find({}).toArray();
+  //   res.status(200).send(JSON.stringify(temp));
+  // }
 });
 
 let prevLang = "";
@@ -155,9 +173,9 @@ app.get('*', function(req, res) {
 });
 
 //start the server
-if (!process.env.PORT) { process.env.PORT = 5000 }
+if (!process.env.PORT) { process.env.PORT = 8080 }
 if (!process.env.IP) { process.env.IP = "0.0.0.0" }
-app.set('port', (process.env.PORT || 5000 ))
+app.set('port', (process.env.PORT || 8080 ))
 const server = app.listen(app.get('port'), process.env.IP, 511, function() {
   console.log(`Server listening on port ${process.env.IP}:${process.env.PORT}`);
 });

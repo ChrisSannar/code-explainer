@@ -10,13 +10,13 @@ Things to do v1:
 √ Fix the 'new line' problem with the code snippits inside explinations
 √ Fix the 'GET' limit problem
     * Maybe it's only when I start it up insead of inserting?
-- Just have another mock language at the top (change collection name)
+√ Just have another mock language at the top (change collection name)
     * Have a database of language names?
 √ Fix design on big screen with zoom (use bootstrap)
-- Clean up explinations (better grammar)
+√ Clean up explinations (better grammar)
 √ Do some "data collection"
     * Just have a database collect how often a tag was used
-- DEPLOY
+√ DEPLOY
 
 v2:
 - Deploy properly
@@ -26,6 +26,7 @@ v2:
     * Have it hold both the language, and the values to add onto the language
 - Add a default page if javascript is off
 - Build a card/rule constructor for them to code on their own
+- Make a CRUD app to configure things
 - Have a better transition between descriptions
 - Link explinations in rules to other explinations
     * Have it retrieve it from the backend using a single token 'GET'
@@ -109,3 +110,14 @@ Feedback:
     keep it as a '0' for your version when you're in beta
     Data collection? Just show them some random chart. "I looked up let 21 times!"
         Chart.js
+
+    WRITE THE LIST: I estimated to be complete with the javascript language, I would need 120 entries
+        This is a moving target
+        I set a goal to have the concept complete
+    I made this open source because I know this project is bigger than me.
+        The more people involved will improve beyond my 
+    When you're done, stop talking. Don't wait for them to "end you"
+    Stronger beginning:
+        The problem has to be personalized - "Wanted to solve this problem"
+            Personal story of how you got to here: "Everyone in the tutoring lab has a hard time understanding the syntax"
+        First slide after your personal story.
