@@ -17,9 +17,9 @@ let dbRegex;
 const mongoURL = "mongodb+srv://chris:Racecar27!@code-explainer-nfphc.mongodb.net/test?retryWrites=true";
 // const mongoURL = "mongodb://chris:Racecar27!@code-explainer-shard-00-00-nfphc.mongodb.net:27017,code-explainer-shard-00-01-nfphc.mongodb.net:27017,code-explainer-shard-00-02-nfphc.mongodb.net:27017/test?ssl=true&replicaSet=code-explainer-shard-0&authSource=admin&retryWrites=true"
 
-const client = new MongoClient(mongoURL, { useNewUrlParser: true });
+const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-client.connect(mongoURL, async function(err, client) {
+client.connect(async function(err, client) {
   if(err) { throw err; }
   console.log("MongoDB connected");
   mongodb = client.db("code-explainer");
