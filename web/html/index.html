@@ -38,7 +38,7 @@
     </form>
 </div>
 
-<div id="confirm">
+<div id="confirmBox">
     <p id="feedbackConfirm"></p>
 </div>
 
@@ -87,12 +87,12 @@ feedbackBox = $('#feedback').dialog({
 });
 
 // The confirm box after feedback has been sent
-confirmBox = $("#confirm").dialog({
+confirmBox = $("#confirmBox").dialog({
     autoOpen: false,
-    height: 150,
+    height: 100,
     width: 200,
     close: function () {
-        feedbackConfirm.dialog("close");
+        $("#feedbackConfirm").dialog("close");
     }
 });
 
@@ -132,7 +132,7 @@ function requestRules(tokens, lang) {
     let temp = JSON.stringify(tokens);
     $.ajax({
         method: 'GET',
-        url: './get/rules/' + lang,
+        url: './api/rules/' + lang,
         data: {
             tokens: temp,
             lang: editor.getSession().getMode().$id
@@ -204,7 +204,7 @@ function sendReview() {
     let feedback = document.querySelector("#feedbackBody").value;
     $.ajax({
         method: 'POST',
-        url: './feedback',
+        url: './api/feedback',
         data: {
             feedback,
             tag: currentTag
@@ -241,7 +241,7 @@ function newTabLinks(el) {
 function sendStat(tag) {
     $.ajax({
         method: 'POST',
-        url: './stat',
+        url: './api/stat',
         data: tag
     });
 }
