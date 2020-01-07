@@ -9,19 +9,20 @@
 </head>
 <body>
 
-    
+
 <div class="header">
     <h3 class="header-title">Code Explainer</h3>
     <p class="version">Beta</p>
     <select name="lang" id="lang-select" onchange="changeLanguage(this.value)">
         <option value="javascript">Javascript</option>
+        <option value="python">Python</option>
     </select>
 </div>
     
 <div id="wrap">
 
 <div id="editor">
-// Insert your code here!
+// Insert your code here
 </div>
 
 <div id="side">
@@ -37,7 +38,7 @@
     </form>
 </div>
 
-<div id="confirm">
+<div id="confirmBox">
     <p id="feedbackConfirm"></p>
 </div>
 
@@ -86,12 +87,12 @@ feedbackBox = $('#feedback').dialog({
 });
 
 // The confirm box after feedback has been sent
-confirmBox = $("#confirm").dialog({
+confirmBox = $("#confirmBox").dialog({
     autoOpen: false,
-    height: 150,
+    height: 100,
     width: 200,
     close: function () {
-        feedbackConfirm.dialog("close");
+        $("#feedbackConfirm").dialog("close");
     }
 });
 
@@ -104,6 +105,7 @@ function changeLanguage(lang) {
 // Goes through the document and tokenizes the whole thing
 function tokenizeDocument() {
     let result = [];    // What we're sending out
+    tokens = {};
 
     // Iterator over the entire document and collect a token for each value
     var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
@@ -130,7 +132,7 @@ function requestRules(tokens, lang) {
     let temp = JSON.stringify(tokens);
     $.ajax({
         method: 'GET',
-        url: './get/rules/' + lang,
+        url: './api/rules/' + lang,
         data: {
             tokens: temp,
             lang: editor.getSession().getMode().$id
@@ -164,13 +166,13 @@ editor.on('click', function(e) {
             // sending the statistics
             sendStat({ tag: rule.tag });
 
-            // This makes it so a 'new line' can appear inside code segments of explinations
+            // This makes it so a 'new line' can appear inside code segments of explanations
             display.innerHTML = newHtml.replace(/\\n/g, '\n') + addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
             newTabLinks(display);
         } else {
             display.innerHTML = `
                 <p>There is no description of this token:   "${tolk.value}"</p>
-                <p>Either the keyword isn't part of the javascript language, or an explination hasn't been developed yet.</p>
+                <p>Either the keyword isn't part of the javascript language, or an explanation hasn't been developed yet.</p>
                 <p>Click on or after a keyword to learn more about it</p>
             `;
         }
@@ -202,7 +204,7 @@ function sendReview() {
     let feedback = document.querySelector("#feedbackBody").value;
     $.ajax({
         method: 'POST',
-        url: './feedback',
+        url: './api/feedback',
         data: {
             feedback,
             tag: currentTag
@@ -223,7 +225,7 @@ function sendReview() {
 }
 
 function highlightCode() {
-    document.querySelectorAll('code').forEach((block) => {
+    document.querySelectorAll('pre code').forEach((block) => {
         hljs.highlightBlock(block);
     });
 }
@@ -239,7 +241,7 @@ function newTabLinks(el) {
 function sendStat(tag) {
     $.ajax({
         method: 'POST',
-        url: './stat',
+        url: './api/stat',
         data: tag
     });
 }

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Code Explainer</title>
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="../css//jquery-ui.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script> -->
+</head>
+<body>
+    
+<!-- <div id="wrap">
+
+<h1>Build</h1>
+
+<div id="side">
+    <div id="display" style="overflow-y:auto;">
+        
+    </div>
+</div>
+
+</div> -->
+
+<div id="root" class="container"></div>
+
+<!-- Bootsrap -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<!-- JQuery -->
+<script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+<script src="js/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- React & Babel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
+<script src="https://unpkg.com/react@16/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/html-react-parser@latest/dist/html-react-parser.min.js"></script>
+
+
+<script type="text/babel">
+
+class Instruct extends React.Component {
+    render () {
+        return (
+            <div className="col-3">
+                <label>Instructions</label>
+                <p></p>
+            </div>
+        )
+    }
+}
+
+class Input extends React.Component {
+
+    constructor() {
+        super();
+    }
+
+    render () {
+        return (
+            <div className="col-5">
+                <form>
+                    <div className="form-group">
+                        <label htmlFor="innerHtml">HTML</label>
+                        <textarea 
+                            className="form-control" 
+                            rows="5" 
+                            value={this.props.html}
+                            onChange={this.props.changeHTML}
+                            style={{resize: "none", fontFamily: "courier"}}>
+                        </textarea>
+                    </div>
+                </form>
+            </div>
+        )
+    }
+}
+
+class Display extends React.Component {
+
+    constructor() {
+        super();
+        
+    }
+
+    render () {
+        // let temp = React.findDOMNode(this);
+        
+        return (
+            <div className="col-4">
+                <div className="htmlDisplay">Visual Result</div>
+                <div className="sideDisplay">
+                    {window.HTMLReactParser(this.props.html)}
+                </div>
+                <hr />
+                <div className="jsonCard">JSON Rule</div>
+            </div>
+        )
+        // hljs.highlightBlock(temp);
+        // return temp;
+    }
+}
+
+class Main extends React.Component {
+
+    
+    constructor () {
+        super();
+        this.state = {};
+        this.html = "<h1>I'm a Card</h1>";
+    }
+    
+    changeHTML = (change) => {
+        this.setState({html: change.target.value});
+        this.html = change.target.value;
+    }
+
+    render() {
+        return (
+            <div className="container">
+                <h1>Build a Rule</h1>
+                <h6>Construct a 'Rule' to be used inside the application. Rules take all functioning html tags and names except 'script' tags. Additional typing are in the instructions.</h6>
+                <div className="row" style={{backgroundColor: "#e3e3e3", padding: "1em"}}>
+                    <Instruct />
+                    <Input changeHTML={this.changeHTML} html={this.html}/>
+                    <Display html={this.html}/>
+                </div>
+            </div>
+        );
+    }
+}
+
+ReactDOM.render(
+    <Main />,
+    document.getElementById('root')
+);
+</script>
+
+<script>
+// Goes through the document and tokenizes the whole thing
+function tokenizeDocument() {
+    let result = [];    // What we're sending out
+
+    // Iterator over the entire document and collect a token for each value
+    var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
+    var tokIter = new TokenIterator(editor.session, 0, 0);
+    tokIter.stepForward();
+    while (tokIter.getCurrentToken()) {
+        let next = tokIter.getCurrentToken();
+        // set the line where the token occures
+        next.line = editor.env.document.doc.getLine(tokIter.getCurrentTokenRow());
+
+        // if we've already pulled the token data, then there's no need to request it again
+        if (!tokens[`${next.type}:${next.value}`]){
+            result.push(next);
+            tokens[`${next.type}:${next.value}`] = next;
+        }
+        tokIter.stepForward();
+    }
+
+    // Request the rules from the server
+    requestRules(result, currentLang);
+}
+
+</script>
+
+<!-- Highlights -->
+<link rel="stylesheet" href="../highlight/styles/darkula.css">
+<script src="../highlight/highlight.pack.js"></script>
+<style>
+.sideDisplay {
+    background: #ffffff;
+    margin-top: 0.5em;
+    /* padding: 0.5em 1em; */
+    height: 10em;
+    border-radius: 5px;
+    padding: 1.5em 1.5em;
+    font-family: 'Fira Sans', sans-serif;
+    text-align: left;
+}
+code {
+    padding: 0em 1em;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+</style>
+
+</body>
+</html>
