@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var config = require('./config.js');
 
 const MongoClient = require('mongodb').MongoClient;
 const sanitize = require('sanitize-html');
@@ -14,7 +15,7 @@ let dbRegex;
 
 // var mongoURL = "mongodb://localhost:27017/code-explainer";
 // var mongoURL = "mongodb+srv://chris:Racecar27!@code-explainer-nfphc.mongodb.net";
-const mongoURL = "mongodb+srv://chris:Racecar27!@code-explainer-nfphc.mongodb.net/test?retryWrites=true";
+const mongoURL = `mongodb+srv://${config.dbUsername}:${config.dbPassword}@code-explainer-nfphc.mongodb.net/test?retryWrites=true`;
 // const mongoURL = "mongodb://chris:Racecar27!@code-explainer-shard-00-00-nfphc.mongodb.net:27017,code-explainer-shard-00-01-nfphc.mongodb.net:27017,code-explainer-shard-00-02-nfphc.mongodb.net:27017/test?ssl=true&replicaSet=code-explainer-shard-0&authSource=admin&retryWrites=true"
 
 const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
