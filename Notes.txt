@@ -1,4 +1,6 @@
 NOW:
+- USE DEBOUNCE TO WAIT FOR INPUT
+    * When you're writing info, it will wait a few miliseconds before processing data (like 400ms or so);
 - Organize your pages and routes to be handled accordingly
 
 Things to do v1:
