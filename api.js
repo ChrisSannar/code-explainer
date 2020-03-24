@@ -17,50 +17,51 @@ const mongoURL = `mongodb+srv://${config.dbUsername}:${config.dbPassword}@code-e
 
 const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-client.connect(async function(err, client) {
-  if(err) { throw err; }
-  console.log("MongoDB connected");
+client.connect(async function (err, client) {
+  if (err) { throw err; }
   mongodb = client.db("code-explainer");
-  // let temp = await client.db("code-explainer").collection("test").find({}).toArray();
-  // console.log(temp);
+  console.log("MongoDB connected");
 });
 
 let prevLang = "";
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
   res.send('TESTING');
 });
 
-router.get('/rules/:lang', async function(req, res) {
+router.get('/rules/:lang', async function (req, res) {
 
   if (mongodb) {
+
+    // Get the incoming tokents
     let tokens = JSON.parse(req.query.tokens);
     let lang = req.params.lang;
 
-    if (!dbTokens || prevLang != lang){
+    // If we don't have the rules or we just change the language, get them
+    if (!dbTokens || prevLang != lang) {
       dbTokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
     }
 
-    if (!dbRegex || prevLang != lang){
+    if (!dbRegex || prevLang != lang) {
       dbRegex = await mongodb.collection(lang + "RegexRules").find({}).toArray();
     }
 
     let rules = {};
     // First make sure we have all our stuff
-    if (dbTokens && dbRegex && tokens){
+    if (dbTokens && dbRegex && tokens) {
       tokens.forEach(token => {
         let tokenSig = `${token.type}:${token.value}`;  // Get the token signature
         let found = dbTokens.find(val => val.token == tokenSig); // lets see if it's found in the tokens database
         if (found) {  // If so, then we just stick it in our return result
           found.html = sanitize(found.html, {
-            allowedTags: sanitize.defaults.allowedTags.concat([ 'h1', 'h2' ])
+            allowedTags: sanitize.defaults.allowedTags.concat(['h1', 'h2'])
           });  // Just to make sure all our input is squeeky clean
           rules[tokenSig] = found;
         } else { // Otherwise, we check the regex database
-          
+
           found = dbRegex.find(val => {
 
-            if (!val.regex){ // If we don't have a regex value, then we just check if the types match
+            if (!val.regex) { // If we don't have a regex value, then we just check if the types match
               return val.tokenType == token.type;
             } else {
               // Otherwise we check to see if 
@@ -72,7 +73,7 @@ router.get('/rules/:lang', async function(req, res) {
           });
           if (found) {
             found.html = sanitize(found.html, {
-              allowedTags: sanitize.defaults.allowedTags.concat([ 'h1', 'h2' ])
+              allowedTags: sanitize.defaults.allowedTags.concat(['h1', 'h2'])
             });
             rules[tokenSig] = found;
           } else {
@@ -87,8 +88,8 @@ router.get('/rules/:lang', async function(req, res) {
   }
 });
 
-router.post('/feedback', function(req, res) {
-  if (mongodb){
+router.post('/feedback', function (req, res) {
+  if (mongodb) {
     mongodb.collection("javascriptFeedback").insert(req.body, function (err, resp) {
       if (err) {
         res.status(500).send("ERR");
@@ -101,11 +102,11 @@ router.post('/feedback', function(req, res) {
 
 router.post('/stat', async function (req, res) {
   if (mongodb) {
-    let stats = await mongodb.collection("javascriptStats").find({tag: req.body.tag}).toArray()    
+    let stats = await mongodb.collection("javascriptStats").find({ tag: req.body.tag }).toArray()
     if (stats.length > 0) {
-      mongodb.collection("javascriptStats").update({tag: req.body.tag}, { $inc: { click: 1}})
+      mongodb.collection("javascriptStats").update({ tag: req.body.tag }, { $inc: { click: 1 } })
     } else {
-      mongodb.collection("javascriptStats").insert({tag: req.body.tag, click: 1})
+      mongodb.collection("javascriptStats").insert({ tag: req.body.tag, click: 1 })
     }
     res.status(200).send("OK");
   }
