@@ -1,20 +1,17 @@
-var express = require('express');
-var router = express.Router();
-var config = require('./config.js');
-
-const MongoClient = require('mongodb').MongoClient;
-const sanitize = require('sanitize-html');
-
-// API for the program
-
-var mongodb;
+// REST API for code explainer
+var { Router } = require('express');
+var router = Router();
 
 // the tokens used throughout the program
+const sanitize = require('sanitize-html');
 let dbTokens;
 let dbRegex;
 
-const mongoURL = `mongodb+srv://${config.dbUsername}:${config.dbPassword}@code-explainer-nfphc.mongodb.net/test?retryWrites=true`;
-
+// Get the mongodb url through the environment variables
+// *** UNCOMMENT FOR DATABASE
+var mongodb;
+const MongoClient = require('mongodb').MongoClient;
+const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
 const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 client.connect(async function (err, client) {
@@ -23,12 +20,16 @@ client.connect(async function (err, client) {
   console.log("MongoDB connected");
 });
 
-let prevLang = "";
-
 router.get('/', function (req, res) {
-  res.send('TESTING');
+  // ***
+  res.setHeader('Content-Type', 'application/json');
+  res.json({ message: 'Code Explainer REST API' });
+  // ***
 });
 
+let prevLang = "";
+
+// GET a list of all the rules for a given language
 router.get('/rules/:lang', async function (req, res) {
 
   if (mongodb) {

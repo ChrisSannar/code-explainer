@@ -3,6 +3,9 @@ console.log('Loading Server ...');
 // Load core modules
 const express = require('express');
 
+// Get our Enviroment Variables
+require('dotenv').config()
+
 // Load express middleware
 const compression = require('compression');
 const helmet = require('helmet');
@@ -25,7 +28,7 @@ app.use(helmet());  // Security
 
 // Allow access from our dashboard app
 app.use(cors({
-  origin: 'http://localhost:3000'
+  origin: process.env.CORS_ORIGIN
 }))
 
 // Dev middleware
@@ -35,12 +38,18 @@ app.use(logger('common'));
 
 // app.use(favicon(`${__dirname}/web/img/favicon.ico`))
 
+// Error Handlers
+let error = require('./error.js');
+
 // Routes
 let pages = require('./pages');
-let api = require('./api');
+let api = require('./api/app');
 
 app.use('/api', api);
 app.use('/', pages);
+
+app.use(error.notFound);
+app.use(error.errorHandler);
 
 // Start the server
 if (!process.env.PORT) { process.env.PORT = 8080 }
