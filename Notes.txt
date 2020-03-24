@@ -1,4 +1,8 @@
 NOW:
+- Organize your project to sperate the server from the application
+    * Put your server files and stuff in 'www' directory
+    * Have the app and functionality be seperate
+    * this makes things easier to test
 - USE DEBOUNCE TO WAIT FOR INPUT
     * When you're writing info, it will wait a few miliseconds before processing data (like 400ms or so);
 - Organize your pages and routes to be handled accordingly
@@ -97,6 +101,7 @@ Random:
         quasi string (`)
         spread operator (...)
         extended libraries (Math, etc.)
+    Primary index file is used only to import middleware and errors
 
 Feedback:
     Use the term "Proof of concept"
