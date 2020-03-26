@@ -4,26 +4,35 @@ var router = Router();
 
 // the tokens used throughout the program
 const sanitize = require('sanitize-html');
+
+// This is used particularly for cachinge. Since this is a REST API do we need that?
 let dbTokens;
 let dbRegex;
 
 // Get the mongodb url through the environment variables
 // *** UNCOMMENT FOR DATABASE
-var mongodb;
-const MongoClient = require('mongodb').MongoClient;
-const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
-const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
+// var mongodb;
+// const MongoClient = require('mongodb').MongoClient;
+// const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
+// const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-client.connect(async function (err, client) {
-  if (err) { throw err; }
-  mongodb = client.db("code-explainer");
-  console.log("MongoDB connected");
-});
+// client.connect(async function (err, client) {
+//   if (err) { throw err; }
+//   mongodb = client.db("code-explainer");
+//   console.log("MongoDB connected");
+// });
+// ***
 
-router.get('/', function (req, res) {
+router.get('/test/:lang', async function (req, res, next) {
   // ***
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ message: 'Code Explainer REST API' });
+  // req query token: {"type":"storage.type","value":"let","line":"let x = 0; "}
+  if (mongodb) {
+    let lang = req.params.lang;
+    let tokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(tokens);
+  }
   // ***
 });
 
@@ -32,6 +41,7 @@ let prevLang = "";
 // GET a list of all the rules for a given language
 router.get('/rules/:lang', async function (req, res) {
 
+  // Filter out each of the tokens
   if (mongodb) {
 
     // Get the incoming tokents
@@ -83,6 +93,7 @@ router.get('/rules/:lang', async function (req, res) {
         }
       });
     }
+    console.log(`RULES2: ${JSON.stringify(rules)}`);
     res.status(200).send(JSON.stringify(rules));
   } else {
     res.status(500).send("Unable to access database");
