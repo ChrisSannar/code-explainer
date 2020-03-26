@@ -13,6 +13,13 @@ const errorHandler = (error, req, res, next) => {
   });
 }
 
+const teaPotHandler = (error, req, res, next) => {
+  res.status(418)
+  res.json({
+    message: `I am a teapot.`
+  })
+}
+
 module.exports = {
   notFound,
   errorHandler,

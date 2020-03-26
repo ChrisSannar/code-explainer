@@ -1,3 +1,34 @@
+REDESIGN!
+    Alright, How are we going to approach this as an API?
+    First, lets look at our CRUDL operations and what they're doing:
+        CREATE - Be able to add a rule to the database
+            Do we want to implement a schema for this so it's  much more clean?
+        READ - Get a single rule from the database
+            How will we identify them? Probably by tag name
+        UPDATE - Change a single rule from the database
+        DELETE - Remove a sing rule from the database
+        LIST - List all the rules for a single language
+            How do we differ from different languages?
+            Should we return the entire language list and then let the frontend sort it out?
+                Not quite, use mongodb aggregate to compile all the rules we need
+            How should we get all the rules vs. only a few per page?
+                If there isn't a query, then send all the rules back
+
+    Things to consider:
+        How are we going to keep this stateless? Probably with less of my own 'caching'
+        Agregating the database for the normal token is fine, but regex might need some more love
+        Check for and remove redundant information (token sig?)
+
+    Next, we need to decouple the application from the server
+        The app itself shouldn't be that complicated. Just CRUDL it.
+        The page might need more work though so we can clean up the code editor
+    
+    CLEAN UP THE README
+
+    Finally, we need to make the frontend application to edit each of the rules
+
+---
+
 NOW:
 - Organize your project to sperate the server from the application
     * Put your server files and stuff in 'www' directory
