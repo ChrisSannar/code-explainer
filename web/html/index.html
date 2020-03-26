@@ -1,253 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <title>Code Explainer</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
-    <link rel="stylesheet" href="../css//jquery-ui.min.css">
+    <link rel="stylesheet" href="../css/style.css" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Fira+Sans"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css//jquery-ui.min.css" />
     <!-- <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script> -->
-</head>
-<body>
-
-
-<div class="header">
-    <h3 class="header-title">Code Explainer</h3>
-    <p class="version">Beta</p>
-    <select name="lang" id="lang-select" onchange="changeLanguage(this.value)">
+  </head>
+  <body>
+    <div class="header">
+      <h3 class="header-title">Code Explainer</h3>
+      <p class="version">Beta</p>
+      <select
+        name="lang"
+        id="lang-select"
+        onchange="changeLanguage(this.value)"
+      >
         <option value="javascript">Javascript</option>
         <option value="python">Python</option>
-    </select>
-</div>
-    
-<div id="wrap">
-
-<div id="editor">
-// Insert your code here
-</div>
-
-<div id="side">
-    <div id="display" style="overflow-y:auto;">
-        <p>Click on or after a keyword to learn more about it</p>
+      </select>
     </div>
-</div>
 
-<div id="feedback">
-    <form id="feedbackForm" action="">
-        <label for="feedbackBody">Tell us how we can improve:</label>
-        <textarea name="feedbackBody" id="feedbackBody" cols="40" rows="10"></textarea>
-    </form>
-</div>
+    <div id="wrap">
+      <div id="editor">// Insert your code here</div>
 
-<div id="confirmBox">
-    <p id="feedbackConfirm"></p>
-</div>
+      <div id="side">
+        <div id="display" style="overflow-y:auto;">
+          <p>Click on or after a keyword to learn more about it</p>
+        </div>
+      </div>
 
-</div>
+      <div id="feedback">
+        <form id="feedbackForm" action="">
+          <label for="feedbackBody">Tell us how we can improve:</label>
+          <textarea
+            name="feedbackBody"
+            id="feedbackBody"
+            cols="40"
+            rows="10"
+          ></textarea>
+        </form>
+      </div>
 
-<script src="src-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
-<script>
+      <div id="confirmBox">
+        <p id="feedbackConfirm"></p>
+      </div>
+    </div>
 
-const displayDefault = `<p>Click on or after a keyword to learn more about it</p>`;
+    <script
+      src="src-noconflict/ace.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="js/jquery-3.3.1.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script
+      src="js/jquery-ui.min.js"
+      type="text/javascript"
+      charset="utf-8"
+    ></script>
+    <script>
+      const displayDefault = `<p>Click on or after a keyword to learn more about it</p>`;
 
-// set the display height to change when the window changes
-window.onresize = changeDisplayHeight;
-function changeDisplayHeight() {
-    document.querySelector('#display').style.height = (window.innerHeight - 70) + 'px';
-}
-changeDisplayHeight();
+      // set the display height to change when the window changes
+      window.onresize = changeDisplayHeight;
+      function changeDisplayHeight() {
+        document.querySelector("#display").style.height =
+          window.innerHeight - 70 + "px";
+      }
+      changeDisplayHeight();
 
-// Get the editor and settings
-var currentLang = 'javascript';
-var editor = ace.edit('editor');
-editor.setOptions({
-    // theme: "ace/theme/idle_fingers",
-    theme: 'ace/theme/kr_theme',
-    showPrintMargin: false
-});
+      // Get the editor and settings
+      var currentLang = "javascript";
+      var editor = ace.edit("editor");
+      editor.setOptions({
+        // theme: "ace/theme/idle_fingers",
+        theme: "ace/theme/kr_theme",
+        showPrintMargin: false
+      });
 
-// Make a not of avaliable languages in the database to accept others
-editor.session.setMode('ace/mode/' + currentLang, tokenizeDocument);
-let tokens = [];
-let rules = {};
+      // Make a not of avaliable languages in the database to accept others
+      editor.session.setMode("ace/mode/" + currentLang, tokenizeDocument);
+      let tokens = [];
+      let rules = {};
 
-// The feedback box for each token
-feedbackBox = $('#feedback').dialog({
-    autoOpen: false,
-    height: 350,
-    width: 400,
-    modal: true,
-    buttons: {
-        "Send" : sendReview,
-        Close: function() {
-          feedbackBox.dialog( "close" );
+      // The feedback box for each token
+      feedbackBox = $("#feedback").dialog({
+        autoOpen: false,
+        height: 350,
+        width: 400,
+        modal: true,
+        buttons: {
+          Send: sendReview,
+          Close: function() {
+            feedbackBox.dialog("close");
+          }
         }
-    }
-});
+      });
 
-// The confirm box after feedback has been sent
-confirmBox = $("#confirmBox").dialog({
-    autoOpen: false,
-    height: 100,
-    width: 200,
-    close: function () {
-        $("#feedbackConfirm").dialog("close");
-    }
-});
+      // The confirm box after feedback has been sent
+      confirmBox = $("#confirmBox").dialog({
+        autoOpen: false,
+        height: 100,
+        width: 200,
+        close: function() {
+          $("#feedbackConfirm").dialog("close");
+        }
+      });
 
-// Changes the language on the page
-function changeLanguage(lang) {
-    currentLang = lang;
-    editor.session.setMode('ace/mode/' + currentLang, tokenizeDocument);
-}
+      // Changes the language on the page
+      function changeLanguage(lang) {
+        currentLang = lang;
+        editor.session.setMode("ace/mode/" + currentLang, tokenizeDocument);
+      }
 
-// Goes through the document and tokenizes the whole thing
-function tokenizeDocument() {
-    let result = [];    // What we're sending out
-    tokens = {};
+      // Goes through the document and tokenizes the whole thing
+      function tokenizeDocument() {
+        let result = []; // What we're sending out
+        tokens = {};
 
-    // Iterator over the entire document and collect a token for each value
-    var TokenIterator = ace.require('ace/token_iterator').TokenIterator;
-    var tokIter = new TokenIterator(editor.session, 0, 0);
-    tokIter.stepForward();
-    while (tokIter.getCurrentToken()) {
-        let next = tokIter.getCurrentToken();
-        // set the line where the token occures
-        next.line = editor.env.document.doc.getLine(tokIter.getCurrentTokenRow());
+        // Iterator over the entire document and collect a token for each value
+        var TokenIterator = ace.require("ace/token_iterator").TokenIterator;
+        var tokIter = new TokenIterator(editor.session, 0, 0);
+        tokIter.stepForward();
+        while (tokIter.getCurrentToken()) {
+          let next = tokIter.getCurrentToken();
+          // set the line where the token occures
+          next.line = editor.env.document.doc.getLine(
+            tokIter.getCurrentTokenRow()
+          );
 
-        // if we've already pulled the token data, then there's no need to request it again
-        if (!tokens[`${next.type}:${next.value}`]){
+          // if we've already pulled the token data, then there's no need to request it again
+          if (!tokens[`${next.type}:${next.value}`]) {
             result.push(next);
             tokens[`${next.type}:${next.value}`] = next;
+          }
+          tokIter.stepForward();
         }
-        tokIter.stepForward();
-    }
 
-    // Request the rules from the server
-    requestRules(result, currentLang);
-}
+        // Request the rules from the server
+        requestRules(result, currentLang);
+      }
 
-function requestRules(tokens, lang) {
-    let temp = JSON.stringify(tokens);
-    $.ajax({
-        method: 'GET',
-        url: './api/rules/' + lang,
-        data: {
+      function requestRules(tokens, lang) {
+        let temp = JSON.stringify(tokens);
+        $.ajax({
+          method: "GET",
+          url: "./api/rules/" + lang,
+          data: {
             tokens: temp,
             lang: editor.getSession().getMode().$id
-        },
-        dataType: 'JSON',
-        useQuerystring: true
-    }).done(function(data){
-        if (data) {
+          },
+          dataType: "JSON",
+          useQuerystring: true
+        }).done(function(data) {
+          if (data) {
             parseRules(data);
-        }
-    });
-}
+          }
+        });
+      }
 
-// parses each of the new rules to add to the already constructed object
-function parseRules(newRules) {
-    Object.keys(newRules).forEach(key => {
-        rules[key] = newRules[key];
-    });
-}
+      // parses each of the new rules to add to the already constructed object
+      function parseRules(newRules) {
+        Object.keys(newRules).forEach(key => {
+          rules[key] = newRules[key];
+        });
+      }
 
-// each time we click in the editor...
-editor.on('click', function(e) {
-    let pos = e.$pos;
-    let sec = editor.session;
-    let tolk = sec.getTokenAt(pos.row, pos.column);
-    if (tolk) {
-        let rule = rules[`${tolk.type}:${tolk.value}`];
-        if (rule){
+      // each time we click in the editor...
+      editor.on("click", function(e) {
+        let pos = e.$pos;
+        let sec = editor.session;
+        let tolk = sec.getTokenAt(pos.row, pos.column);
+        if (tolk) {
+          let rule = rules[`${tolk.type}:${tolk.value}`];
+          if (rule) {
             let newHtml = rule.html;
 
             // sending the statistics
             sendStat({ tag: rule.tag });
 
             // This makes it so a 'new line' can appear inside code segments of explanations
-            display.innerHTML = newHtml.replace(/\\n/g, '\n') + addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
+            display.innerHTML =
+              newHtml.replace(/\\n/g, "\n") +
+              addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
             newTabLinks(display);
-        } else {
+          } else {
             display.innerHTML = `
                 <p>There is no description of this token:   "${tolk.value}"</p>
                 <p>Either the keyword isn't part of the javascript language, or an explanation hasn't been developed yet.</p>
                 <p>Click on or after a keyword to learn more about it</p>
             `;
+          }
+          highlightCode();
+        } else {
+          display.innerHTML = `<p>Click on or after a keyword to learn more about it</p>`;
         }
-        highlightCode();
-    } else {
-        display.innerHTML = `<p>Click on or after a keyword to learn more about it</p>`;
-    }
-});
+      });
 
-editor.on('change', tokenizeDocument);
+      editor.on("change", tokenizeDocument);
 
-// adds the feedback button to each card
-function addFeedbackButton(tag) {
-    return `
+      // adds the feedback button to each card
+      function addFeedbackButton(tag) {
+        return `
         <button id="feedbackButton" onClick="openFeedbackModal('${tag}')">Feedback</button>
     `;
-}
+      }
 
-let currentTag = "";
+      let currentTag = "";
 
-function openFeedbackModal(tag) {
-    currentTag = tag;
-    feedbackBox.dialog('option', 'title', tag);
-    feedbackBox.dialog('open');
-}
+      function openFeedbackModal(tag) {
+        currentTag = tag;
+        feedbackBox.dialog("option", "title", tag);
+        feedbackBox.dialog("open");
+      }
 
-// sends the review from the feedback module to my database
-function sendReview() {
-    let feedback = document.querySelector("#feedbackBody").value;
-    $.ajax({
-        method: 'POST',
-        url: './api/feedback',
-        data: {
+      // sends the review from the feedback module to my database
+      function sendReview() {
+        let feedback = document.querySelector("#feedbackBody").value;
+        $.ajax({
+          method: "POST",
+          url: "./api/feedback",
+          data: {
             feedback,
             tag: currentTag
-        }
-    }).done(function(data){
-        if (data) {
+          }
+        }).done(function(data) {
+          if (data) {
             if (data == "OK") {
-                document.querySelector("#confirmBox").innerHTML = "Thanks for contributing!";
-                feedbackBox.dialog('close');
-                confirmBox.dialog('open');
+              document.querySelector("#confirmBox").innerHTML =
+                "Thanks for contributing!";
+              feedbackBox.dialog("close");
+              confirmBox.dialog("open");
             } else {
-                document.querySelector("#confirmBox").innerHTML = "There was an error sending the feedback. Please try again.";
-                feedbackBox.dialog('close');
-                confirmBox.dialog('open');
+              document.querySelector("#confirmBox").innerHTML =
+                "There was an error sending the feedback. Please try again.";
+              feedbackBox.dialog("close");
+              confirmBox.dialog("open");
             }
-        }
-    });
-}
+          }
+        });
+      }
 
-function highlightCode() {
-    document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightBlock(block);
-    });
-}
+      function highlightCode() {
+        document.querySelectorAll("pre code").forEach(block => {
+          hljs.highlightBlock(block);
+        });
+      }
 
-// Takes all the links of an element and sets them to open in a new tab
-function newTabLinks(el) {
-    el.querySelectorAll('a').forEach(link => {
-        link.setAttribute('target', '_blank');
-    });
-}
+      // Takes all the links of an element and sets them to open in a new tab
+      function newTabLinks(el) {
+        el.querySelectorAll("a").forEach(link => {
+          link.setAttribute("target", "_blank");
+        });
+      }
 
-// sends the tag for statistics
-function sendStat(tag) {
-    $.ajax({
-        method: 'POST',
-        url: './api/stat',
-        data: tag
-    });
-}
-
-</script>
-<link rel="stylesheet" href="../highlight/styles/darkula.css">
-<script src="../highlight/highlight.pack.js"></script>
-</body>
+      // sends the tag for statistics
+      function sendStat(tag) {
+        $.ajax({
+          method: "POST",
+          url: "./api/stat",
+          data: tag
+        });
+      }
+    </script>
+    <link rel="stylesheet" href="../highlight/styles/darkula.css" />
+    <script src="../highlight/highlight.pack.js"></script>
+  </body>
 </html>

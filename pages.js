@@ -39,7 +39,7 @@ router.post('/password', function (req, res) {
     res.status(200).send({ status: `SUCCESS` });
   } else {
     pass = false;
-    res.status(200).send({ status: `FAIL` });
+    res.status(403).send({ status: `FAIL` });
   }
 });
 
