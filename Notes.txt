@@ -1,3 +1,6 @@
+NEXT:
+    Allow the GET requests to filter based on query
+
 REDESIGN!
     Alright, How are we going to approach this as an API?
         Lets break it down so there is the section of the API that handles CRUD operations
