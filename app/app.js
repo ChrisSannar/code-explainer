@@ -1,4 +1,5 @@
-// REST API for code explainer
+// Used for interactions with the app
+
 var { Router } = require('express');
 var router = Router();
 
@@ -22,19 +23,6 @@ let dbRegex;
 //   console.log("MongoDB connected");
 // });
 // ***
-
-router.get('/test/:lang', async function (req, res, next) {
-  // ***
-  // req query token: {"type":"storage.type","value":"let","line":"let x = 0; "}
-  if (mongodb) {
-    let lang = req.params.lang;
-    let tokens = await mongodb.collection(lang + "TokenRules").find({}).toArray();
-
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).json(tokens);
-  }
-  // ***
-});
 
 let prevLang = "";
 

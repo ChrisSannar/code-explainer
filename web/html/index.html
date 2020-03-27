@@ -152,7 +152,7 @@
         let temp = JSON.stringify(tokens);
         $.ajax({
           method: "GET",
-          url: "./api/rules/" + lang,
+          url: "./app/rules/" + lang,
           data: {
             tokens: temp,
             lang: editor.getSession().getMode().$id
@@ -226,7 +226,7 @@
         let feedback = document.querySelector("#feedbackBody").value;
         $.ajax({
           method: "POST",
-          url: "./api/feedback",
+          url: "./app/feedback",
           data: {
             feedback,
             tag: currentTag
@@ -265,7 +265,7 @@
       function sendStat(tag) {
         $.ajax({
           method: "POST",
-          url: "./api/stat",
+          url: "./app/stat",
           data: tag
         });
       }
