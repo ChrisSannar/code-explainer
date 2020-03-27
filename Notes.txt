@@ -1,5 +1,7 @@
 REDESIGN!
     Alright, How are we going to approach this as an API?
+        Lets break it down so there is the section of the API that handles CRUD operations
+        and then another section that handles the app itself. (Microservice the app)
     First, lets look at our CRUDL operations and what they're doing:
         CREATE - Be able to add a rule to the database
             Do we want to implement a schema for this so it's  much more clean?
