@@ -42,11 +42,13 @@ app.use(cors({
 let error = require('./error.js');
 
 // Routes
-let pages = require('./pages');
-let api = require('./api/app');
+let pages = require('./pages'); // This displays the pages of the application
+let codeApp = require('./app/app'); // This is for the app to run
+let api = require('./app/api'); // This is to perform CRUD oprations
 
-app.use('/api', api);
 app.use('/', pages);
+app.use('/app', codeApp);
+app.use('/api', api);
 
 app.use(error.notFound);
 app.use(error.errorHandler);
