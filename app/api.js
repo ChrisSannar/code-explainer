@@ -6,6 +6,7 @@ var router = Router();
 // Get the mongodb url through the environment variables
 var mongodb;
 const MongoClient = require('mongodb').MongoClient;
+const MongoID = require('mongodb').ObjectID;
 const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
 const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -79,14 +80,34 @@ router.get('/regex/:lang', async function (req, res, next) {
   }
 });
 
+// ***
+// 5e91334a872b5c2073c5f0b8
+// ***
+
 // PUT update a token rule
 router.put('/token/:lang/:id', async function (req, res, next) {
   if (mongodb) {
 
-    let lang = req.params.lang;
-    let id = req.params.id;
+    try {
+      let lang = req.params.lang;
+      let body = req.body;
+      let tokenInfo = body.token.split(`:`);
+      body.tokenType = tokenInfo[0];
+      body.tokenValue = tokenInfo[1];
 
-    res.status(201).send(`OK`);
+      console.log(`BODY`, body);
+      let mongoId = new MongoID(req.params.id);
+      mongodb.collection(`${lang}TokenRules`)
+        .updateOne(
+          { _id: mongoId },
+          {
+            $set: body
+          })
+        .then(result => res.status(200).send(result))
+        .catch(result => next(result));
+    } catch (err) {
+      next(err);
+    }
   } else {
     next('Database not set');
   }
