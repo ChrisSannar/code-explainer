@@ -28,7 +28,7 @@
       <div id="editor">// Insert your code here</div>
 
       <div id="side">
-        <div id="display" style="overflow-y:auto;">
+        <div id="display" style="overflow-y: auto;">
           <p>Click on or after a keyword to learn more about it</p>
         </div>
       </div>
@@ -82,7 +82,7 @@
       editor.setOptions({
         // theme: "ace/theme/idle_fingers",
         theme: "ace/theme/kr_theme",
-        showPrintMargin: false
+        showPrintMargin: false,
       });
 
       // Make a not of avaliable languages in the database to accept others
@@ -98,10 +98,10 @@
         modal: true,
         buttons: {
           Send: sendReview,
-          Close: function() {
+          Close: function () {
             feedbackBox.dialog("close");
-          }
-        }
+          },
+        },
       });
 
       // The confirm box after feedback has been sent
@@ -109,9 +109,9 @@
         autoOpen: false,
         height: 100,
         width: 200,
-        close: function() {
+        close: function () {
           $("#feedbackConfirm").dialog("close");
-        }
+        },
       });
 
       // Changes the language on the page
@@ -155,11 +155,11 @@
           url: "./app/rules/" + lang,
           data: {
             tokens: temp,
-            lang: editor.getSession().getMode().$id
+            lang: editor.getSession().getMode().$id,
           },
           dataType: "JSON",
-          useQuerystring: true
-        }).done(function(data) {
+          useQuerystring: true,
+        }).done(function (data) {
           if (data) {
             parseRules(data);
           }
@@ -168,13 +168,13 @@
 
       // parses each of the new rules to add to the already constructed object
       function parseRules(newRules) {
-        Object.keys(newRules).forEach(key => {
+        Object.keys(newRules).forEach((key) => {
           rules[key] = newRules[key];
         });
       }
 
       // each time we click in the editor...
-      editor.on("click", function(e) {
+      editor.on("click", function (e) {
         let pos = e.$pos;
         let sec = editor.session;
         let tolk = sec.getTokenAt(pos.row, pos.column);
@@ -229,9 +229,9 @@
           url: "./app/feedback",
           data: {
             feedback,
-            tag: currentTag
-          }
-        }).done(function(data) {
+            tag: currentTag,
+          },
+        }).done(function (data) {
           if (data) {
             if (data == "OK") {
               document.querySelector("#confirmBox").innerHTML =
@@ -249,14 +249,14 @@
       }
 
       function highlightCode() {
-        document.querySelectorAll("pre code").forEach(block => {
+        document.querySelectorAll("pre code").forEach((block) => {
           hljs.highlightBlock(block);
         });
       }
 
       // Takes all the links of an element and sets them to open in a new tab
       function newTabLinks(el) {
-        el.querySelectorAll("a").forEach(link => {
+        el.querySelectorAll("a").forEach((link) => {
           link.setAttribute("target", "_blank");
         });
       }
@@ -266,7 +266,7 @@
         $.ajax({
           method: "POST",
           url: "./app/stat",
-          data: tag
+          data: tag,
         });
       }
     </script>
