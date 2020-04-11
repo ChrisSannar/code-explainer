@@ -81,7 +81,7 @@ router.get('/rules/:lang', async function (req, res) {
         }
       });
     }
-    console.log(`RULES2: ${JSON.stringify(rules)}`);
+    // console.log(`RULES2: ${JSON.stringify(rules)}`);
     res.status(200).send(JSON.stringify(rules));
   } else {
     res.status(500).send("Unable to access database");
