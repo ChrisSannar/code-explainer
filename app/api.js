@@ -50,7 +50,9 @@ router.get('/token/:lang', async function (req, res, next) {
 
     // Filter the tags given the query
     let tags = req.query.tag;
-    tokens = tokens.filter(toke => tags.includes(toke.tag))
+    if (tags) {
+      tokens = tokens.filter(toke => tags.includes(toke.tag));
+    }
 
     // Send back the data
     res.setHeader('Content-Type', 'application/json');
@@ -70,7 +72,9 @@ router.get('/regex/:lang', async function (req, res, next) {
 
     // Filter the tags given the query
     let tags = req.query.tag;
-    regex = regex.filter(toke => tags.includes(toke.tag))
+    if (tags) {
+      tokens = tokens.filter(toke => tags.includes(toke.tag));
+    }
 
     // Send back the data
     res.setHeader('Content-Type', 'application/json');
