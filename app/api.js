@@ -85,23 +85,23 @@ router.get('/regex/:lang', async function (req, res, next) {
 // ***
 
 // PUT update a token rule
-router.put('/token/:lang/:id', async function (req, res, next) {
+router.put('/token/:lang/:id', function (req, res, next) {
   if (mongodb) {
 
     try {
+      // Get and set the various value and parameters
       let lang = req.params.lang;
-      let body = req.body;
-      let tokenInfo = body.token.split(`:`);
-      body.tokenType = tokenInfo[0];
-      body.tokenValue = tokenInfo[1];
+      let updatedRule = req.body;
+      let tokenInfo = updatedRule.token.split(`:`);
+      updatedRule.tokenType = tokenInfo[0];
+      updatedRule.tokenValue = tokenInfo[1];
 
-      console.log(`BODY`, body);
       let mongoId = new MongoID(req.params.id);
       mongodb.collection(`${lang}TokenRules`)
         .updateOne(
           { _id: mongoId },
           {
-            $set: body
+            $set: updatedRule
           })
         .then(result => res.status(200).send(result))
         .catch(result => next(result));
@@ -114,12 +114,25 @@ router.put('/token/:lang/:id', async function (req, res, next) {
 });
 
 // PUT update a regex rule
-router.put('/regex/:lang/:id', async function (req, res, next) {
+router.put('/regex/:lang/:id', function (req, res, next) {
   if (mongodb) {
+    try {
+      // Get and set the various value and parameters
+      let lang = req.params.lang;
+      let updatedRule = req.body;
 
-    let lang = req.params.lang;
-    let id = req.params.id;
-    let updatedRule = req.body;
+      let mongoId = new MongoID(req.params.id);
+      mongodb.collection(`${lang}RegexRules`)
+        .updateOne(
+          { _id: mongoId },
+          {
+            $set: updatedRule
+          })
+        .then(result => res.status(200).send(result))
+        .catch(result => next(result));
+    } catch (err) {
+      next(err);
+    }
 
     res.status(201).send(`OK`);
   } else {
@@ -127,27 +140,46 @@ router.put('/regex/:lang/:id', async function (req, res, next) {
   }
 });
 
-// POST a new roken rule
-router.post('/token/:lang', async function (req, res, next) {
+// POST a new token rule
+router.post('/token/:lang', function (req, res, next) {
   if (mongodb) {
 
-    let lang = req.params.lang;
-    let newRule = req.body;
+    try {
+      // Set up the internal specifics of the object
+      let lang = req.params.lang;
+      let newRule = req.body;
+      let tokenInfo = newRule.token.split(`:`);
+      newRule.tokenType = tokenInfo[0];
+      newRule.tokenValue = tokenInfo[1];
 
-    res.status(201).send(`OK`);
+      mongodb.collection(`${lang}TokenRules`)
+        .insertOne(newRule)
+        .then(result => res.status(201).send(result))
+        .catch(err => next(err));
+    } catch (err) {
+      next(err);
+    }
+
   } else {
     next('Database not set');
   }
 });
 
-// POST a new roken rule
-router.post('/regex/:lang', async function (req, res, next) {
+// POST a new regex rule
+router.post('/regex/:lang', function (req, res, next) {
   if (mongodb) {
+    try {
+      // Set up the internal specifics of the object
+      let lang = req.params.lang;
+      let newRule = req.body;
 
-    let lang = req.params.lang;
-    let newRule = req.body;
-
-    res.status(201).send(`OK`);
+      mongodb.collection(`${lang}RegexRules`)
+        .insertOne(newRule)
+        .then(result => res.status(201).send(result))
+        .catch(err => next(err));
+    } catch (err) {
+      next(err);
+    }
   } else {
     next('Database not set');
   }
@@ -157,21 +189,40 @@ router.post('/regex/:lang', async function (req, res, next) {
 router.delete('/token/:lang/:id', async function (req, res, next) {
   if (mongodb) {
 
-    let lang = req.params.lang;
-    let id = req.params.id;
+    try {
+      let lang = req.params.lang;
+      let mongoId = new MongoID(req.params.id);
 
-    res.status(200).send(`OK`);
+      mongodb.collection(`${lang}TokenRules`)
+        .deleteOne({ _id: mongoId })
+        .then(result => res.status(200).send(result))
+        .catch(next);
+
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    next('Database not set');
   }
 });
 
 // DELETE a regex rule given an id
 router.delete('/regex/:lang/:id', async function (req, res, next) {
   if (mongodb) {
+    try {
+      let lang = req.params.lang;
+      let mongoId = new MongoID(req.params.id);
 
-    let lang = req.params.lang;
-    let id = req.params.id;
+      mongodb.collection(`${lang}RegexRules`)
+        .deleteOne({ _id: mongoId })
+        .then(result => res.status(200).send(result))
+        .catch(next);
 
-    res.status(200).send(`OK`);
+    } catch (err) {
+      next(err);
+    }
+  } else {
+    next('Database not set');
   }
 });
 
