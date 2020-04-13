@@ -84,10 +84,6 @@ router.get('/regex/:lang', async function (req, res, next) {
   }
 });
 
-// ***
-// 5e91334a872b5c2073c5f0b8
-// ***
-
 // PUT update a token rule
 router.put('/token/:lang/:id', function (req, res, next) {
   if (mongodb) {
@@ -96,9 +92,11 @@ router.put('/token/:lang/:id', function (req, res, next) {
       // Get and set the various value and parameters
       let lang = req.params.lang;
       let updatedRule = req.body;
-      let tokenInfo = updatedRule.token.split(`:`);
-      updatedRule.tokenType = tokenInfo[0];
-      updatedRule.tokenValue = tokenInfo[1];
+      if (!updatedRule.tokenType || !updatedRule.tokenValue) {
+        let tokenInfo = updatedRule.token.split(`:`);
+        updatedRule.tokenType = tokenInfo[0];
+        updatedRule.tokenValue = tokenInfo[1];
+      }
 
       let mongoId = new MongoID(req.params.id);
       mongodb.collection(`${lang}TokenRules`)
@@ -107,7 +105,7 @@ router.put('/token/:lang/:id', function (req, res, next) {
           {
             $set: updatedRule
           })
-        .then(result => res.status(200).send(result))
+        .then(() => res.status(200).send(`OK`))
         .catch(result => next(result));
     } catch (err) {
       next(err);
@@ -132,7 +130,7 @@ router.put('/regex/:lang/:id', function (req, res, next) {
           {
             $set: updatedRule
           })
-        .then(result => res.status(200).send(result))
+        .then(() => res.status(200).send(`OK`))
         .catch(result => next(result));
     } catch (err) {
       next(err);
@@ -152,13 +150,15 @@ router.post('/token/:lang', function (req, res, next) {
       // Set up the internal specifics of the object
       let lang = req.params.lang;
       let newRule = req.body;
-      let tokenInfo = newRule.token.split(`:`);
-      newRule.tokenType = tokenInfo[0];
-      newRule.tokenValue = tokenInfo[1];
+      if (!newRule.tokenType || !newRule.tokenValue) {
+        let tokenInfo = newRule.token.split(`:`);
+        newRule.tokenType = tokenInfo[0];
+        newRule.tokenValue = tokenInfo[1];
+      }
 
       mongodb.collection(`${lang}TokenRules`)
         .insertOne(newRule)
-        .then(result => res.status(201).send(result))
+        .then(() => res.status(201).send(`OK`))
         .catch(err => next(err));
     } catch (err) {
       next(err);
@@ -179,7 +179,7 @@ router.post('/regex/:lang', function (req, res, next) {
 
       mongodb.collection(`${lang}RegexRules`)
         .insertOne(newRule)
-        .then(result => res.status(201).send(result))
+        .then(() => res.status(201).send(`OK`))
         .catch(err => next(err));
     } catch (err) {
       next(err);
@@ -199,7 +199,7 @@ router.delete('/token/:lang/:id', async function (req, res, next) {
 
       mongodb.collection(`${lang}TokenRules`)
         .deleteOne({ _id: mongoId })
-        .then(result => res.status(200).send(result))
+        .then(result => res.status(204).send(`OK`))
         .catch(next);
 
     } catch (err) {
@@ -219,7 +219,7 @@ router.delete('/regex/:lang/:id', async function (req, res, next) {
 
       mongodb.collection(`${lang}RegexRules`)
         .deleteOne({ _id: mongoId })
-        .then(result => res.status(200).send(result))
+        .then(result => res.status(204).send(`OK`))
         .catch(next);
 
     } catch (err) {
