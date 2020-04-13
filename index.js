@@ -32,7 +32,7 @@ app.use(cors({
 }))
 
 // Dev middleware
-// app.use(logger('common'));
+app.use(logger('common'));
 
 // app.use(logger('dev'));
 
