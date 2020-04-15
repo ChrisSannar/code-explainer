@@ -44,10 +44,12 @@ let error = require('./error.js');
 // Routes
 let codeApp = require('./app/app'); // This is for the app to run
 let api = require('./app/api'); // This is to perform CRUD oprations
+let login = require('./app/login');
 let pages = require('./pages'); // This displays the pages of the application
 
 app.use('/api/v1', api);
 app.use('/app', codeApp);
+app.use('/login', login);
 app.use('/', pages);
 
 app.use(error.notFound);
