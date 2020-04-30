@@ -158,7 +158,7 @@ router.post('/token/:lang', function (req, res, next) {
 
       mongodb.collection(`${lang}TokenRules`)
         .insertOne(newRule)
-        .then(() => res.status(201).send(`OK`))
+        .then(result => res.status(201).send(result.insertedId))
         .catch(err => next(err));
     } catch (err) {
       next(err);
@@ -179,7 +179,7 @@ router.post('/regex/:lang', function (req, res, next) {
 
       mongodb.collection(`${lang}RegexRules`)
         .insertOne(newRule)
-        .then(() => res.status(201).send(`OK`))
+        .then(result => res.status(201).send(result.insertedId))
         .catch(err => next(err));
     } catch (err) {
       next(err);
