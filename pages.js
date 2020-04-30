@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-var passwordHash = require('password-hash');
+// var passwordHash = require('password-hash');
 
 // Serves all the pages for the html file
 router.get('/', function (req, res) {
@@ -30,25 +30,26 @@ router.get('/stats', async function (req, res) {
   }
 });
 
-let pass = false;
-let hash = 'sha1$69a6f84c$1$c1a80e1cadeb6bc4dd1fdb74577d82bbd4f4476e';
-router.post('/password', function (req, res) {
-  let password = req.body.password;
-  if (passwordHash.verify(password, hash)) {
-    pass = true;
-    res.status(200).send({ status: `SUCCESS` });
-  } else {
-    pass = false;
-    res.status(403).send({ status: `FAIL` });
-  }
-});
+// let pass = false;
+// let hash = 'sha1$69a6f84c$1$c1a80e1cadeb6bc4dd1fdb74577d82bbd4f4476e';
+// router.post('/password', function (req, res) {
+//   let password = req.body.password;
+//   if (passwordHash.verify(password, hash)) {
+//     pass = true;
+//     res.status(200).send({ status: `SUCCESS` });
+//   } else {
+//     pass = false;
+//     res.status(403).send({ status: `FAIL` });
+//   }
+// });
 
 router.get('/admin', function (req, res) {
-  if (pass) {
-    res.status(200).sendFile(`${__dirname}/web/html/admin.html`);
-  } else {
-    res.status(200).sendFile(`${__dirname}/web/html/password.html`);
-  }
+  res.status(404).send(null);
+  // if (pass) {
+  //   res.status(200).sendFile(`${__dirname}/web/html/admin.html`);
+  // } else {
+  //   res.status(200).sendFile(`${__dirname}/web/html/password.html`);
+  // }
 });
 
 router.get('*', function (req, res) {
