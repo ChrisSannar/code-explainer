@@ -1,249 +1,242 @@
 // Used for CRUD operations on the database
-
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const rulesUtil = require(path.join(__dirname, '..', 'util', 'rules'));
 
-// Get the mongodb url through the environment variables
-// var mongodb;
-// const MongoClient = require('mongodb').MongoClient;
-// const MongoID = require('mongodb').ObjectID;
-// const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN_ROOT}`;
-// const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
-
-// client.connect(async function (err, client) {
-//   if (err) { throw err; }
-//   mongodb = client.db("code-explainer");
-//   console.log("MongoDB connected api");
-// });
-
+// Mongoose, but for the rules instead of the admin.
 var mongoose = require('mongoose');
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false);
 mongoose.connect(process.env.DB_DOMAIN, { useNewUrlParser: true, useUnifiedTopology: true });
 var db = mongoose.connection;
-var mongoError = false;
+var mongoError = false;   // Make sure we have the database established
 db.on('error', function () {
   mongoError = true;
   console.error.bind(console, 'connection error:')
 });
 
+// The functions to generate schemas based on programming language
 const TokenRulesGenerator = require(path.join(__dirname, '..', 'models', 'tokenRule.schema'));
 const RegexRulesGenerator = require(path.join(__dirname, '..', 'models', 'regexRule.schema'));
-
-// *** TESTING
-router.get('/', async function (req, res) {
-  res.json("OK");
-});
-// ***
 
 // GET all the rules of a particular language
 router.get('/:lang', async function (req, res, next) {
   // req query token: {"type":"storage.type","value":"let","line":"let x = 0; "}
   if (!mongoError) {
+    try {
+      // Pull the language and get the database call
+      let lang = req.params.lang;
+      let TokenRules = TokenRulesGenerator(lang + 'TokenRules');
+      let RegexRules = RegexRulesGenerator(lang + 'RegexRules');
+      let tokens = await TokenRules.find();
+      let regex = await RegexRules.find();
 
-    // Pull the language and get the database call
-    let lang = req.params.lang;
-    let TokenRules = TokenRulesGenerator(lang + 'TokenRules');
-    let RegexRules = RegexRulesGenerator(lang + 'RegexRules');
-    let tokens = await TokenRules.find();
-    let regex = await RegexRules.find();
+      // Send back the data
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json(tokens.concat(regex));
 
-    // Send back the data
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).json(tokens.concat(regex));
+    } catch (err) {
+      next(err);
+    }
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
 // GET all the tokenized rules of the given language
 router.get('/token/:lang', async function (req, res, next) {
-  if (mongodb) {
+  if (!mongoError) {
+    try {
+      // Pull the language and get the database call
+      let lang = req.params.lang;
 
-    // Pull the language and get the database call
-    let lang = req.params.lang;
-    let tokens = await mongodb.collection(`${lang}TokenRules`).find({}).toArray();
+      // Set up the mongoose model
+      let TokenRules = TokenRulesGenerator(lang + 'TokenRules');
+      let tokens = await TokenRules.find();
 
-    // Filter the tags given the query
-    let tags = req.query.tag;
-    if (tags) {
-      tokens = tokens.filter(toke => tags.includes(toke.tag));
+      // Filter the tags given the query
+      let tags = req.query.tag;
+      if (tags) {
+        tokens = tokens.filter(toke => tags.includes(toke.tag));
+      }
+
+      // Send back the data
+      res.status(200).json(tokens);
+
+    } catch (err) {
+      next(err)
     }
-
-    // Send back the data
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).json(tokens);
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
-// GET the tokenized rules of the given language
+// GET the regex rules of the given language
 router.get('/regex/:lang', async function (req, res, next) {
-  if (mongodb) {
+  if (!mongoError) {
+    try {
+      // Pull the language and get the database call
+      let lang = req.params.lang;
 
-    // Pull the language and get the database call
-    let lang = req.params.lang;
-    let regex = await mongodb.collection(`${lang}RegexRules`).find({}).toArray();
+      // Set up the mongoose model
+      let RegexRules = RegexRulesGenerator(lang + 'RegexRules');
+      let regex = await RegexRules.find();
 
-    // Filter the tags given the query
-    let tags = req.query.tag;
-    if (tags) {
-      tokens = tokens.filter(toke => tags.includes(toke.tag));
+      // Filter the tags given the query
+      let tags = req.query.tag;
+      if (tags) {
+        regex = regex.filter(toke => tags.includes(toke.tag));
+      }
+
+      // Send back the data
+      res.status(200).json(regex);
+
+    } catch (err) {
+      next(err);
     }
-
-    // Send back the data
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).json(regex);
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
 // PUT update a token rule
 router.put('/token/:lang/:id', function (req, res, next) {
-  if (mongodb) {
-
+  if (!mongoError) {
     try {
-      // Get and set the various value and parameters
+      // Set up the Schema/collection we want to update to
       let lang = req.params.lang;
-      let updatedRule = req.body;
-      if (!updatedRule.tokenType || !updatedRule.tokenValue) {
-        let tokenInfo = updatedRule.token.split(`:`);
-        updatedRule.tokenType = tokenInfo[0];
-        updatedRule.tokenValue = tokenInfo[1];
-      }
+      const TokenRule = TokenRulesGenerator(lang + 'TokenRules');
 
-      let mongoId = new MongoID(req.params.id);
-      mongodb.collection(`${lang}TokenRules`)
-        .updateOne(
-          { _id: mongoId },
-          {
-            $set: updatedRule
-          })
+      // Format the rule
+      const updatedRule = rulesUtil.formatTokenRule(req.body);
+
+      // Update the rule
+      TokenRule.findByIdAndUpdate(req.params.id, updatedRule)
         .then(() => res.status(200).send(`OK`))
         .catch(result => next(result));
+
     } catch (err) {
       next(err);
     }
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
 // PUT update a regex rule
 router.put('/regex/:lang/:id', function (req, res, next) {
-  if (mongodb) {
+  if (!mongoError) {
     try {
       // Get and set the various value and parameters
       let lang = req.params.lang;
-      let updatedRule = req.body;
+      const RegexRule = RegexRulesGenerator(lang + 'RegexRules');
 
-      let mongoId = new MongoID(req.params.id);
-      mongodb.collection(`${lang}RegexRules`)
-        .updateOne(
-          { _id: mongoId },
-          {
-            $set: updatedRule
-          })
+      // Format the rule
+      const updatedRule = rulesUtil.formatRegexRule(req.body);
+
+      // Update the rule
+      RegexRule.findByIdAndUpdate(req.params.id, updatedRule)
         .then(() => res.status(200).send(`OK`))
         .catch(result => next(result));
+
     } catch (err) {
       next(err);
     }
-
-    res.status(201).send(`OK`);
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
 // POST a new token rule
 router.post('/token/:lang', function (req, res, next) {
-  if (mongodb) {
+  if (!mongoError) {
 
     try {
-      // Set up the internal specifics of the object
+      // Set up the Schema based on the language
       let lang = req.params.lang;
-      let newRule = req.body;
-      if (!newRule.tokenType || !newRule.tokenValue) {
-        let tokenInfo = newRule.token.split(`:`);
-        newRule.tokenType = tokenInfo[0];
-        newRule.tokenValue = tokenInfo[1];
-      }
+      const TokenRule = TokenRulesGenerator(lang + 'TokenRules');
 
-      mongodb.collection(`${lang}TokenRules`)
-        .insertOne(newRule)
-        .then(result => res.status(201).send(result.insertedId))
+      // Make the new Schema from a properly formatted token rule
+      const newRule = new TokenRule(rulesUtil.formatTokenRule(req.body));
+
+      // Save to the database and send back the new id
+      newRule.save()
+        .then(result => res.status(201).send(result._id))
         .catch(err => next(err));
+
     } catch (err) {
       next(err);
     }
 
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
 // POST a new regex rule
 router.post('/regex/:lang', function (req, res, next) {
-  if (mongodb) {
+  if (!mongoError) {
     try {
       // Set up the internal specifics of the object
       let lang = req.params.lang;
-      let newRule = req.body;
+      const RegexRule = RegexRulesGenerator(lang + 'RegexRules');
 
-      mongodb.collection(`${lang}RegexRules`)
-        .insertOne(newRule)
-        .then(result => res.status(201).send(result.insertedId))
+      // Make the new Schema from a properly formatted regex rule
+      let newRule = new RegexRule(rulesUtil.formatRegexRule(req.body));
+
+      // Save to the database and send back the new id
+      newRule.save()
+        .then(result => res.status(201).send(result._id))
         .catch(err => next(err));
+
     } catch (err) {
       next(err);
     }
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
 // DELETE a token rule given an id
 router.delete('/token/:lang/:id', async function (req, res, next) {
-  if (mongodb) {
-
+  if (!mongoError) {
     try {
+      // Select the collection based on language
       let lang = req.params.lang;
-      let mongoId = new MongoID(req.params.id);
+      const TokenRule = TokenRulesGenerator(lang + 'TokenRules');
 
-      mongodb.collection(`${lang}TokenRules`)
-        .deleteOne({ _id: mongoId })
-        .then(result => res.status(204).send(`OK`))
+      // Remove, the respond accordingly
+      TokenRule.findByIdAndDelete(req.params.id)
+        .then(() => res.status(204).send(`OK`))
         .catch(next);
 
     } catch (err) {
       next(err);
     }
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
 // DELETE a regex rule given an id
 router.delete('/regex/:lang/:id', async function (req, res, next) {
-  if (mongodb) {
+  if (!mongoError) {
     try {
+      // Select the collection based on language
       let lang = req.params.lang;
-      let mongoId = new MongoID(req.params.id);
+      const RegexRule = RegexRulesGenerator(lang + 'RegexRules');
 
-      mongodb.collection(`${lang}RegexRules`)
-        .deleteOne({ _id: mongoId })
-        .then(result => res.status(204).send(`OK`))
+      // Remove, the respond accordingly
+      RegexRule.findByIdAndDelete(req.params.id)
+        .then(() => res.status(204).send(`OK`))
         .catch(next);
 
     } catch (err) {
       next(err);
     }
   } else {
-    next('Database not set');
+    next(new Error('Database not set'));
   }
 });
 
