@@ -48,12 +48,12 @@ app.use(cors({    // Allow access from our dashboard app
 // Routes
 let api = require('./routes/api'); // This is to perform CRUD oprations
 let codeApp = require('./routes/app'); // This is for the app to run
-// let dashboard = require('./routes/dashboard');  // Login to the application
+let dashboard = require('./routes/dashboard');  // Login to the application
 let pages = require('./routes/pages'); // This displays the pages of the application
 
 app.use('/api/v1', api);
 app.use('/app', codeApp);
-// app.use('/dashboard', dashboard);
+app.use('/dashboard', dashboard);
 app.use('/', pages);
 
 // app.use(error.notFound);

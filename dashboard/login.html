@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Code Explainer Dashboard - Login</title>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(#fff, #f3f3f3);
+        height: 100vh;
+        width: 100vw;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+          "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+          "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .content {
+        display: flex;
+        flex-direction: column;
+        max-width: 30%;
+        background: #fff;
+        margin-top: -5em;
+        padding: 1em;
+        box-shadow: #e3e3e3 0 0 3px;
+        border-radius: 3px;
+        font-size: 20px;
+      }
+
+      .login-form > input {
+        width: calc(100% - 1em);
+        margin: 0.5em 0;
+        padding: 0.5em 0.4em;
+        font-size: 16px;
+        border: solid #e3e3e3 1.5px;
+        border-radius: 3px;
+      }
+
+      .login-form > input:focus,
+      .login-form > .login-btn:focus {
+        outline: none;
+      }
+
+      .login-btn {
+        font-size: 16px;
+        margin: 0.5em auto;
+        padding: 0.5em 1em;
+        background: #1c1917;
+        color: #f3f3f3;
+        border-radius: 3px;
+      }
+
+      .login-btn:focus {
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="content">
+        <h2 style="margin-top: 0; text-align: center;">
+          Code Explainer Dashboard
+        </h2>
+        <form action="/user/login" method="POST" class="login-form">
+          <label for="email">Email:</label>
+          <input type="text" name="email" id="email" />
+          <label for="password">Password:</label>
+          <input type="password" name="password" id="password" />
+          <div style="display: flex; align-items: center;">
+            <button type="submit" class="login-btn">Login</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+  <script>
+    // document.querySelector(".login-btn").addEventListener("click", (e) => {
+    //   let email = document.querySelector("#email").value;
+    //   let password = document.querySelector("#password").value;
+    // });
+  </script>
+</html>
