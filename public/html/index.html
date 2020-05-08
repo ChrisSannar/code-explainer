@@ -25,7 +25,7 @@
     </div>
 
     <div id="wrap">
-      <div id="editor">// Insert your code here</div>
+      <div id="editor"></div>
 
       <div id="side">
         <div id="display" style="overflow-y: auto;">
@@ -73,7 +73,10 @@
     <!-- Modals Implementation -->
     <script src="js/modal.js" type="text/javascript" charset="utf-8"></script>
     <script>
+      const editorDefaultText = `\n// Insert your code here\n`;
       const displayDefault = `<p>Click on or after a keyword to learn more about it</p>`;
+
+      document.querySelector("#editor").innerHTML = editorDefaultText;
 
       // Get the editor and settings
       var currentLang = "javascript";
@@ -162,12 +165,12 @@
           if (rule) {
             let newHtml = rule.html;
 
+            // *** For now, we're going to just hold off on sending stats and feedback
             // sending the statistics
-            sendStat({ tag: rule.tag });
+            // sendStat({ tag: rule.tag });
 
-            display.innerHTML =
-              newHtml.replace(/\\n/g, "\n") + // This makes it so a 'new line' can appear inside code segments of explanations
-              addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
+            display.innerHTML = newHtml.replace(/\\n/g, "\n"); // This makes it so a 'new line' can appear inside code segments of explanations
+            // + addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
 
             // Both in 'display.js'
             newTabLinks(display);
