@@ -12,17 +12,19 @@ let dbRegex;
 
 // Get the mongodb url through the environment variables
 // *** UNCOMMENT FOR DATABASE
-var mongodb;
-const MongoClient = require('mongodb').MongoClient;
-const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
-const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
+// var mongodb;
+// const MongoClient = require('mongodb').MongoClient;
+// const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
+// const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-client.connect(async function (err, client) {
-  if (err) { throw err; }
-  mongodb = client.db("code-explainer");
-  console.log("MongoDB connected app");
-});
+// client.connect(async function (err, client) {
+//   if (err) { throw err; }
+//   mongodb = client.db("code-explainer");
+//   console.log("MongoDB connected app");
+// });
 // ***
+
+
 
 let prevLang = "";
 

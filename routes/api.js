@@ -1,36 +1,53 @@
 // Used for CRUD operations on the database
 
-var { Router } = require('express');
-var router = Router();
+const express = require('express');
+const router = express.Router();
+const path = require('path');
 
 // Get the mongodb url through the environment variables
-var mongodb;
-const MongoClient = require('mongodb').MongoClient;
-const MongoID = require('mongodb').ObjectID;
-const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
-const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
+// var mongodb;
+// const MongoClient = require('mongodb').MongoClient;
+// const MongoID = require('mongodb').ObjectID;
+// const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN_ROOT}`;
+// const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
-client.connect(async function (err, client) {
-  if (err) { throw err; }
-  mongodb = client.db("code-explainer");
-  console.log("MongoDB connected api");
+// client.connect(async function (err, client) {
+//   if (err) { throw err; }
+//   mongodb = client.db("code-explainer");
+//   console.log("MongoDB connected api");
+// });
+
+var mongoose = require('mongoose');
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false);
+mongoose.connect(process.env.DB_DOMAIN, { useNewUrlParser: true, useUnifiedTopology: true });
+var db = mongoose.connection;
+var mongoError = false;
+db.on('error', function () {
+  mongoError = true;
+  console.error.bind(console, 'connection error:')
 });
 
+const TokenRulesGenerator = require(path.join(__dirname, '..', 'models', 'tokenRule.schema'));
+const RegexRulesGenerator = require(path.join(__dirname, '..', 'models', 'regexRule.schema'));
+
 // *** TESTING
-router.get('/', function (req, res) {
-  res.json({ message: 'MARK' });
-})
+router.get('/', async function (req, res) {
+  res.json("OK");
+});
 // ***
 
 // GET all the rules of a particular language
 router.get('/:lang', async function (req, res, next) {
   // req query token: {"type":"storage.type","value":"let","line":"let x = 0; "}
-  if (mongodb) {
+  if (!mongoError) {
 
     // Pull the language and get the database call
     let lang = req.params.lang;
-    let tokens = await mongodb.collection(`${lang}TokenRules`).find({}).toArray();
-    let regex = await mongodb.collection(`${lang}RegexRules`).find({}).toArray();
+    let TokenRules = TokenRulesGenerator(lang + 'TokenRules');
+    let RegexRules = RegexRulesGenerator(lang + 'RegexRules');
+    let tokens = await TokenRules.find();
+    let regex = await RegexRules.find();
 
     // Send back the data
     res.setHeader('Content-Type', 'application/json');
