@@ -14,12 +14,10 @@ const path = require('path');
 // Get our Enviroment Variables
 require('dotenv').config();
 
-var mongoose = require('mongoose');
-mongoose.set('useCreateIndex', true);
-mongoose.set('useFindAndModify', false);
-mongoose.connect(process.env.DB_ADMIN_DOMAIN, { useNewUrlParser: true, useUnifiedTopology: true });
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
+// Connect to the database for session
+const mongooseConnection =
+  require(path.join(__dirname, 'util', 'mongoose-connect'))
+    (process.env.DB_ADMIN_URI);
 const MongoStore = require('connect-mongo')(session);  // Used to save the session to the db
 
 // Start up the app
@@ -38,7 +36,7 @@ app.use(session({
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: db }),
+  store: new MongoStore({ mongooseConnection }),
 }));
 app.use(cors({    // Allow access from our dashboard app
   origin: process.env.CORS_ORIGIN
