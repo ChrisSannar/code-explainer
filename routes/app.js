@@ -12,7 +12,7 @@ let dbRegex;
 
 // Get the mongodb url through the environment variables
 // *** UNCOMMENT FOR DATABASE
-// var mongodb;
+var mongodb;
 // const MongoClient = require('mongodb').MongoClient;
 // const mongoURL = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_DOMAIN}`;
 // const client = new MongoClient(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -23,8 +23,6 @@ let dbRegex;
 //   console.log("MongoDB connected app");
 // });
 // ***
-
-
 
 let prevLang = "";
 
@@ -99,6 +97,8 @@ router.post('/feedback', function (req, res) {
       }
       res.status(200).send("OK");
     });
+  } else {
+    res.status(500).send("Unable to access database");
   }
 });
 
@@ -111,6 +111,8 @@ router.post('/stat', async function (req, res) {
       mongodb.collection("javascriptStats").insert({ tag: req.body.tag, click: 1 })
     }
     res.status(200).send("OK");
+  } else {
+    res.status(500).send("Unable to access database");
   }
 });
 

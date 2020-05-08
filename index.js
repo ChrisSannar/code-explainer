@@ -56,12 +56,12 @@ app.use(cors({    // Allow access from our dashboard app
 
 // Routes
 let api = require('./routes/api'); // This is to perform CRUD oprations
-// let codeApp = require('./routes/app'); // This is for the app to run
+let codeApp = require('./routes/app'); // This is for the app to run
 // let login = require('./routes/login');  // Login to the application
 let pages = require('./routes/pages'); // This displays the pages of the application
 
 app.use('/api/v1', api);
-// app.use('/app', codeApp);
+app.use('/app', codeApp);
 // app.use('/login', login);
 app.use('/', pages);
 
