@@ -169,3 +169,19 @@ Feedback:
         The problem has to be personalized - "Wanted to solve this problem"
             Personal story of how you got to here: "Everyone in the tutoring lab has a hard time understanding the syntax"
         First slide after your personal story.
+
+PROBLEMS:
+    How should we organize the data? - We need to have different collections for the various parts 
+    of a language: (ex. javascriptRegexRules, javascriptStats) How do we oranize these?
+        Option 1: Have a database for each language
+            Pros: Better oranized and structured, Want to know info about that database? Don't need to query
+            Cons: Hard changing between languages...
+        Option 2: (Current) Each language has it's name tied to collection
+            Pros: Don't have to refactor, No difficulty in changing to language
+            Cons: Database has lots of collections, will probably get messy...
+        Options 3: One collection type (token/regex/stats), include language property into document
+            Pros: Cleaner database that's still flexible
+            Cons: Large amount of documents in a collection, heavier processing to retrieve data
+        Solution: Option 2 - Don't need to refactor and collections can scale easier
+    
+        

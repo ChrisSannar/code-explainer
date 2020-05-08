@@ -1,59 +1,63 @@
 console.log('Loading Server ...');
 
-// Load core modules
+// Load core modules and middleware
 const express = require('express');
-
-// Get our Enviroment Variables
-require('dotenv').config()
-
-// Load express middleware
+const bodyParser = require('body-parser');
 const compression = require('compression');
 const helmet = require('helmet');
 const logger = require('morgan');
-const cors = require('cors');
 // const favicon = require('serve-favicon');
+const session = require('express-session');
+const cors = require('cors');
 const path = require('path');
-const bodyParser = require('body-parser');
 
+// Get our Enviroment Variables
+require('dotenv').config();
+
+// Connect to the database for session
+const mongooseConnection =
+  require(path.join(__dirname, 'util', 'mongoose-connect'))
+    (process.env.DB_ADMIN_URI);
+const MongoStore = require('connect-mongo')(session);  // Used to save the session to the db
+
+// Start up the app
 let app = express();
 
-// setting up directories and parsing
-app.use(express.static(`${__dirname}/web`));
+// setting up directories, parsing, and middleware
+app.use(express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing 
-
-// Use middleware for various things
 app.use(compression()); // Compression
 app.use(helmet());  // Security
-
-// Allow access from our dashboard app
-app.use(cors({
+app.use(logger('dev'));
+// app.use(favicon(`${__dirname}/web/img/favicon.ico`));
+app.use(session({
+  key: 'user_sid',
+  secret: process.env.SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: new MongoStore({ mongooseConnection }),
+}));
+app.use(cors({    // Allow access from our dashboard app
   origin: process.env.CORS_ORIGIN
-}))
-
-// Dev middleware
-app.use(logger('common'));
-
-// app.use(logger('dev'));
-
-// app.use(favicon(`${__dirname}/web/img/favicon.ico`))
+}));
 
 // Error Handlers
-let error = require('./error.js');
+// let error = require('./routes/error.js');
 
 // Routes
-let codeApp = require('./app/app'); // This is for the app to run
-let api = require('./app/api'); // This is to perform CRUD oprations
-let login = require('./app/login');
-let pages = require('./pages'); // This displays the pages of the application
+let api = require('./routes/api'); // This is to perform CRUD oprations
+let codeApp = require('./routes/app'); // This is for the app to run
+// let dashboard = require('./routes/dashboard');  // Login to the application
+let pages = require('./routes/pages'); // This displays the pages of the application
 
 app.use('/api/v1', api);
 app.use('/app', codeApp);
-app.use('/login', login);
+// app.use('/dashboard', dashboard);
 app.use('/', pages);
 
-app.use(error.notFound);
-app.use(error.errorHandler);
+// app.use(error.notFound);
+// app.use(error.errorHandler);
 
 // Start the server
 if (!process.env.PORT) { process.env.PORT = 8080 }

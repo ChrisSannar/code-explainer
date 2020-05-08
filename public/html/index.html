@@ -7,7 +7,7 @@
       href="https://fonts.googleapis.com/css?family=Fira+Sans"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../css//jquery-ui.min.css" />
+    <link rel="stylesheet" href="../css/jquery-ui.min.css" />
     <!-- <script src="//ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script> -->
   </head>
   <body>
@@ -25,7 +25,7 @@
     </div>
 
     <div id="wrap">
-      <div id="editor">// Insert your code here</div>
+      <div id="editor"></div>
 
       <div id="side">
         <div id="display" style="overflow-y: auto;">
@@ -50,31 +50,33 @@
       </div>
     </div>
 
+    <!-- Code editor -->
     <script
       src="src-noconflict/ace.js"
       type="text/javascript"
       charset="utf-8"
     ></script>
+    <!-- JQuery -->
     <script
       src="js/jquery-3.3.1.js"
       type="text/javascript"
       charset="utf-8"
     ></script>
+    <!-- JQuery UI (Modal code) -->
     <script
       src="js/jquery-ui.min.js"
       type="text/javascript"
       charset="utf-8"
     ></script>
+    <!-- Code Explainer Display -->
+    <script src="js/display.js" type="text/javascript" charset="utf-8"></script>
+    <!-- Modals Implementation -->
+    <script src="js/modal.js" type="text/javascript" charset="utf-8"></script>
     <script>
+      const editorDefaultText = `\n// Insert your code here\n`;
       const displayDefault = `<p>Click on or after a keyword to learn more about it</p>`;
 
-      // set the display height to change when the window changes
-      window.onresize = changeDisplayHeight;
-      function changeDisplayHeight() {
-        document.querySelector("#display").style.height =
-          window.innerHeight - 70 + "px";
-      }
-      changeDisplayHeight();
+      document.querySelector("#editor").innerHTML = editorDefaultText;
 
       // Get the editor and settings
       var currentLang = "javascript";
@@ -90,30 +92,6 @@
       let tokens = [];
       let rules = {};
 
-      // The feedback box for each token
-      feedbackBox = $("#feedback").dialog({
-        autoOpen: false,
-        height: 350,
-        width: 400,
-        modal: true,
-        buttons: {
-          Send: sendReview,
-          Close: function () {
-            feedbackBox.dialog("close");
-          },
-        },
-      });
-
-      // The confirm box after feedback has been sent
-      confirmBox = $("#confirmBox").dialog({
-        autoOpen: false,
-        height: 100,
-        width: 200,
-        close: function () {
-          $("#feedbackConfirm").dialog("close");
-        },
-      });
-
       // Changes the language on the page
       function changeLanguage(lang) {
         currentLang = lang;
@@ -128,7 +106,6 @@
         // Iterator over the entire document and collect a token for each value
         var TokenIterator = ace.require("ace/token_iterator").TokenIterator;
         var tokIter = new TokenIterator(editor.session, 0, 0);
-        tokIter.stepForward();
         while (tokIter.getCurrentToken()) {
           let next = tokIter.getCurrentToken();
           // set the line where the token occures
@@ -149,21 +126,24 @@
       }
 
       function requestRules(tokens, lang) {
-        let temp = JSON.stringify(tokens);
         $.ajax({
-          method: "GET",
+          method: "POST",
           url: "./app/rules/" + lang,
           data: {
-            tokens: temp,
-            lang: editor.getSession().getMode().$id,
+            tokens: tokens,
           },
           dataType: "JSON",
           useQuerystring: true,
-        }).done(function (data) {
-          if (data) {
-            parseRules(data);
-          }
-        });
+        })
+          .done(function (data) {
+            if (data) {
+              parseRules(data);
+            }
+          })
+          .fail(function (err) {
+            console.log(err);
+            // alert("Could not pull rules from the server", err);
+          });
       }
 
       // parses each of the new rules to add to the already constructed object
@@ -177,88 +157,60 @@
       editor.on("click", function (e) {
         let pos = e.$pos;
         let sec = editor.session;
-        let tolk = sec.getTokenAt(pos.row, pos.column);
-        if (tolk) {
-          let rule = rules[`${tolk.type}:${tolk.value}`];
+        let tolk = sec.getTokenAt(pos.row, pos.column); // Locate the token at the current position
+
+        // If we're dealing with text, no rules for that
+        if (tolk && tolk?.type != "text") {
+          let rule = rules[`${tolk.type}:${tolk.value}`]; // See if we have the rule for that given token
           if (rule) {
             let newHtml = rule.html;
 
+            // *** For now, we're going to just hold off on sending stats and feedback
             // sending the statistics
-            sendStat({ tag: rule.tag });
+            // sendStat({ tag: rule.tag });
 
-            // This makes it so a 'new line' can appear inside code segments of explanations
-            display.innerHTML =
-              newHtml.replace(/\\n/g, "\n") +
-              addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
+            display.innerHTML = newHtml.replace(/\\n/g, "\n"); // This makes it so a 'new line' can appear inside code segments of explanations
+            // + addFeedbackButton(rules[`${tolk.type}:${tolk.value}`].tag);
+
+            // Both in 'display.js'
             newTabLinks(display);
+            highlightCode();
           } else {
+            // If we don't have the rule, then it needs to be developed
             display.innerHTML = `
-                <p>There is no description of this token:   "${tolk.value}"</p>
+                <p>There is no description of this token: "${tolk.value}"</p>
                 <p>Either the keyword isn't part of the javascript language, or an explanation hasn't been developed yet.</p>
                 <p>Click on or after a keyword to learn more about it</p>
             `;
           }
-          highlightCode();
         } else {
           display.innerHTML = `<p>Click on or after a keyword to learn more about it</p>`;
         }
       });
 
-      editor.on("change", tokenizeDocument);
+      // Whenever we make a change in the editor, tokenize it (but only after a bit)
+      editor.on("change", debounce(tokenizeDocument, 400));
+
+      // Credit David Walsh (https://davidwalsh.name/javascript-debounce-function)
+      function debounce(func, wait, immediate) {
+        var timeout;
+        return function executedFunction() {
+          var context = this;
+          var args = arguments;
+          var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          var callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      }
 
       // adds the feedback button to each card
       function addFeedbackButton(tag) {
-        return `
-        <button id="feedbackButton" onClick="openFeedbackModal('${tag}')">Feedback</button>
-    `;
-      }
-
-      let currentTag = "";
-
-      function openFeedbackModal(tag) {
-        currentTag = tag;
-        feedbackBox.dialog("option", "title", tag);
-        feedbackBox.dialog("open");
-      }
-
-      // sends the review from the feedback module to my database
-      function sendReview() {
-        let feedback = document.querySelector("#feedbackBody").value;
-        $.ajax({
-          method: "POST",
-          url: "./app/feedback",
-          data: {
-            feedback,
-            tag: currentTag,
-          },
-        }).done(function (data) {
-          if (data) {
-            if (data == "OK") {
-              document.querySelector("#confirmBox").innerHTML =
-                "Thanks for contributing!";
-              feedbackBox.dialog("close");
-              confirmBox.dialog("open");
-            } else {
-              document.querySelector("#confirmBox").innerHTML =
-                "There was an error sending the feedback. Please try again.";
-              feedbackBox.dialog("close");
-              confirmBox.dialog("open");
-            }
-          }
-        });
-      }
-
-      function highlightCode() {
-        document.querySelectorAll("pre code").forEach((block) => {
-          hljs.highlightBlock(block);
-        });
-      }
-
-      // Takes all the links of an element and sets them to open in a new tab
-      function newTabLinks(el) {
-        el.querySelectorAll("a").forEach((link) => {
-          link.setAttribute("target", "_blank");
-        });
+        return `<button id="feedbackButton" onClick="openFeedbackModal('${tag}')">Feedback</button>`;
       }
 
       // sends the tag for statistics
@@ -270,6 +222,7 @@
         });
       }
     </script>
+    <!-- Editor Themeing (after setup) -->
     <link rel="stylesheet" href="../highlight/styles/darkula.css" />
     <script src="../highlight/highlight.pack.js"></script>
   </body>

@@ -1,5 +1,4 @@
-// Used for CRUD operations on the database
-
+// Handles dashboard operations (mostly users)
 var { Router } = require('express');
 var router = Router();
 
