@@ -44,25 +44,18 @@ app.use(cors({    // Allow access from our dashboard app
   origin: process.env.CORS_ORIGIN
 }));
 
-// *** TESTING
-// app.get('/', function (req, res, next) {
-//   res.send('OK');
-// });
-// ***
-
-
 // Error Handlers
 // let error = require('./routes/error.js');
 
 // Routes
 let api = require('./routes/api'); // This is to perform CRUD oprations
 let codeApp = require('./routes/app'); // This is for the app to run
-// let login = require('./routes/login');  // Login to the application
+// let dashboard = require('./routes/dashboard');  // Login to the application
 let pages = require('./routes/pages'); // This displays the pages of the application
 
 app.use('/api/v1', api);
 app.use('/app', codeApp);
-// app.use('/login', login);
+// app.use('/dashboard', dashboard);
 app.use('/', pages);
 
 // app.use(error.notFound);

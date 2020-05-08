@@ -12,6 +12,10 @@ var RegexRuleSchema = Schema({
   links: [String]
 });
 
-module.exports = function (collection) {
-  return mongoose.model('RegexRule', RegexRuleSchema, collection);
+// mongooseConnection: A specific connection with the database (to be used throughout the course of a module)
+module.exports = function (mongooseConnection) {
+  // collection: Where we're getting the regex rules from (to be used for each call)
+  return function (collection) {
+    return mongooseConnection.model('RegexRule', RegexRuleSchema, collection)
+  }
 }

@@ -4,26 +4,35 @@ const router = express.Router();
 const path = require('path');
 const rulesUtil = require(path.join(__dirname, '..', 'util', 'rules'));
 
-// Mongoose, but for the rules instead of the admin.
-var mongoose = require('mongoose');
-mongoose.set('useCreateIndex', true);
-mongoose.set('useFindAndModify', false);
-mongoose.connect(process.env.DB_DOMAIN, { useNewUrlParser: true, useUnifiedTopology: true });
-var db = mongoose.connection;
-var mongoError = false;   // Make sure we have the database established
-db.on('error', function () {
-  mongoError = true;
-  console.error.bind(console, 'connection error:')
-});
+// // Mongoose, but for the rules instead of the admin.
+// var mongoose = require('mongoose');
+// mongoose.set('useCreateIndex', true);
+// mongoose.set('useFindAndModify', false);
+// mongoose.connect(process.env.DB_DOMAIN, { useNewUrlParser: true, useUnifiedTopology: true });
+// var db = mongoose.connection;
+// var mongoError = false;   // Make sure we have the database established
+// db.on('error', function () {
+//   mongoError = true;
+//   console.error.bind(console, 'connection error:')
+// });
+
+// Our mongoose connection to the database
+const mongooseConnection =
+  require(path.join(__dirname, '..', 'util', 'mongoose-connect'))
+    (process.env.DB_DOMAIN);
 
 // The functions to generate schemas based on programming language
-const TokenRulesGenerator = require(path.join(__dirname, '..', 'models', 'tokenRule.schema'));
-const RegexRulesGenerator = require(path.join(__dirname, '..', 'models', 'regexRule.schema'));
+const TokenRulesGenerator =
+  require(path.join(__dirname, '..', 'models', 'tokenRule.schema'))
+    (mongooseConnection);
+const RegexRulesGenerator =
+  require(path.join(__dirname, '..', 'models', 'regexRule.schema'))
+    (mongooseConnection);
 
 // GET all the rules of a particular language
 router.get('/:lang', async function (req, res, next) {
   // req query token: {"type":"storage.type","value":"let","line":"let x = 0; "}
-  if (!mongoError) {
+  if (mongooseConnection) {
     try {
       // Pull the language and get the database call
       let lang = req.params.lang;
@@ -33,7 +42,6 @@ router.get('/:lang', async function (req, res, next) {
       let regex = await RegexRules.find();
 
       // Send back the data
-      res.setHeader('Content-Type', 'application/json');
       res.status(200).json(tokens.concat(regex));
 
     } catch (err) {

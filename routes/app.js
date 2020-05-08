@@ -1,12 +1,33 @@
-// Used for interactions with the app
+// Used for specific interactions with the application
 
 var { Router } = require('express');
 var router = Router();
+const path = require('path');
+
+// Our mongoose connection to the database
+const mongooseConnection =
+  require(path.join(__dirname, '..', 'util', 'mongoose-connect'))
+    (process.env.DB_DOMAIN);
+
+// The functions to generate schemas based on programming language
+const TokenRulesGenerator =
+  require(path.join(__dirname, '..', 'models', 'tokenRule.schema'))
+    (mongooseConnection);
+
+// const RegexRulesGenerator = require(path.join(__dirname, '..', 'models', 'regexRule.schema'));
+
+// ***
+(async function () {
+  // let TokenRules = mongooseConnect.TokenRulesGenerator('regexTokenRules');
+  let TokenRules = TokenRulesGenerator('javascriptTokenRules');
+  console.log(await TokenRules.find());
+})()
+// ***
 
 // the tokens used throughout the program
 const sanitize = require('sanitize-html');
 
-// This is used particularly for cachinge. Since this is a REST API do we need that?
+// This is used particularly for cacheing. Since this is a REST API do we need that?
 let dbTokens;
 let dbRegex;
 
@@ -25,6 +46,18 @@ var mongodb;
 // ***
 
 let prevLang = "";
+
+// GET a list of rules given the matching tokens
+// (Using POST to not limit the number of tokens to URL length)
+router.post('/rules/:language', async function (req, res) {
+  let tokens = req.body.tokens;
+  console.log(req.params.language);
+  console.log(tokens);
+
+  let dbTokens = await
+
+    res.status(400).send('FAIL');
+});
 
 // GET a list of all the rules for a given language
 router.get('/rules/:lang', async function (req, res) {

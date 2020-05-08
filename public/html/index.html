@@ -103,7 +103,6 @@
         // Iterator over the entire document and collect a token for each value
         var TokenIterator = ace.require("ace/token_iterator").TokenIterator;
         var tokIter = new TokenIterator(editor.session, 0, 0);
-        tokIter.stepForward();
         while (tokIter.getCurrentToken()) {
           let next = tokIter.getCurrentToken();
           // set the line where the token occures
@@ -124,21 +123,25 @@
       }
 
       function requestRules(tokens, lang) {
-        let temp = JSON.stringify(tokens);
+        console.log("TOKE", tokens);
         $.ajax({
-          method: "GET",
+          method: "POST",
           url: "./app/rules/" + lang,
           data: {
-            tokens: temp,
-            lang: editor.getSession().getMode().$id,
+            tokens: tokens,
           },
           dataType: "JSON",
           useQuerystring: true,
-        }).done(function (data) {
-          if (data) {
-            parseRules(data);
-          }
-        });
+        })
+          .done(function (data) {
+            if (data) {
+              parseRules(data);
+            }
+          })
+          .fail(function (err) {
+            console.log(err);
+            // alert("Could not pull rules from the server", err);
+          });
       }
 
       // parses each of the new rules to add to the already constructed object
@@ -189,22 +192,16 @@
       // Credit David Walsh (https://davidwalsh.name/javascript-debounce-function)
       function debounce(func, wait, immediate) {
         var timeout;
-
         return function executedFunction() {
           var context = this;
           var args = arguments;
-
           var later = function () {
             timeout = null;
             if (!immediate) func.apply(context, args);
           };
-
           var callNow = immediate && !timeout;
-
           clearTimeout(timeout);
-
           timeout = setTimeout(later, wait);
-
           if (callNow) func.apply(context, args);
         };
       }
