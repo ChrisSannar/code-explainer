@@ -26,7 +26,7 @@ const StatsGenerator =
 
 // GET a list of rules given the matching tokens
 // (Using POST to not limit the number of tokens to URL length)
-router.post('/rules/:language', async function (req, res) {
+router.post('/rules/:language', async function (req, res, next) {
   if (mongooseConnection) {
     try {
       // Extract our values from the body and parameters

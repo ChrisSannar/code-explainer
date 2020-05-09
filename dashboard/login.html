@@ -1,3 +1,5 @@
+<!-- A simple form to login to the dashboard application -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -69,7 +71,7 @@
         <h2 style="margin-top: 0; text-align: center;">
           Code Explainer Dashboard
         </h2>
-        <form action="/user/login" method="POST" class="login-form">
+        <form action="/dashboard/login" method="POST" class="login-form">
           <label for="email">Email:</label>
           <input type="text" name="email" id="email" />
           <label for="password">Password:</label>
@@ -81,10 +83,4 @@
       </div>
     </div>
   </body>
-  <script>
-    // document.querySelector(".login-btn").addEventListener("click", (e) => {
-    //   let email = document.querySelector("#email").value;
-    //   let password = document.querySelector("#password").value;
-    // });
-  </script>
 </html>

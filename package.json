@@ -24,6 +24,7 @@
     "rollup-watch": "^4.3.1"
   },
   "dependencies": {
+    "bcrypt": "4.0.1",
     "body-parser": "^1.18.3",
     "compression": "1.7.4",
     "connect-mongo": "3.2.0",
