@@ -9,7 +9,7 @@
 */
 // Validates if we've already signed in
 const signedInChecker = (req, res, next) => {
-  if (req.cookies && req.cookies.user_sid && req.session.user) {
+  if (req.session.user) {
     next();
   } else {
     res.redirect('/dashboard/login');
@@ -18,8 +18,9 @@ const signedInChecker = (req, res, next) => {
 
 // Redire
 const redirectIfSignedIn = (req, res, next) => {
-  if (req.cookies && req.cookies.user_sid && req.session.user) {
-    res.redirect('/');
+  // if (req.cookies && req.cookies.user_sid && req.session.user) {
+  if (req.session.user) {
+    res.redirect('/dashboard');
   } else {
     next();
   }

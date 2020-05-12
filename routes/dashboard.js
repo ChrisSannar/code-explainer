@@ -30,25 +30,27 @@ router.post('/new-user', function (req, res, next) {
 
 // ***/
 
-router.get('/login', function (req, res, next) {
+router.get('/login', auth.redirectIfSignedIn, function (req, res, next) {
   res.status(200).sendFile(path.join(__dirname, '..', 'dashboard', 'login.html'))
 });
 
 // Attempting to login
-router.post('/login', auth.redirectIfSignedIn, function (req, res, next) {
+router.post('/login', function (req, res, next) {
   let body = req.body;
 
+  // Make sure the user exists in the first place
   Users.findOne({ email: body.email })
     .then((user) => {
+
+      // If no user, then redirect
       if (!user) {
-        console.log('no user')
         res.redirect('/dashboard/login');
       } else {
         user.comparePassword(body.password, function (err, passing) {
           if (err) return next();
           if (passing) {
-            // req.session.user = Object.assign({}, body); // Set the session with the user
-            res.redirect('/');
+            req.session.user = Object.assign({}, user); // Set the session with the user
+            res.redirect('/dashboard');
           } else {
             return res.redirect('/dashboard/login');
           }
@@ -57,41 +59,23 @@ router.post('/login', auth.redirectIfSignedIn, function (req, res, next) {
 
     }).catch(err => {
       res.status(400).json(err);
-    })
+    });
 
-
-  // // Check to see if the user exists
-  // users.findOne({ "email": body.email }, (err, user) => {
-
-  //   // Any error we encounter, or any user we can't find, handle accordingly
-  //   if (err) {
-  //     return next();
-  //   }
-  //   else if (!user) {
-  //     res.redirect('/users/login');
-  //   }
-
-  //   // If we're successful, match the password using a built in method
-  //   else {
-  //     user.comparePassword(body.password, function (err, passing) {
-  //       if (err) return next();
-  //       if (passing) {
-  //         req.session.user = Object.assign({}, body); // Set the session with the user
-  //         res.redirect('/');
-  //       } else {
-  //         return res.redirect('/users/login');
-  //       }
-  //     })
-  //   }
-  // });
 });
+
+router.get('/logout', function (req, res, next) {
+  if (req.session.user) {
+    res.clearCookie('user_sid');
+    res.status(200).send('OK');
+  } else {
+    res.redirect('/dashboard/login');
+  }
+})
 
 router.post('/new-password', function (req, res, next) {
   // Only allow this when while we're in a session
   // if (req.session.user && req.cookies.user_sid) {
   let { email, newPassword, oldPassword } = req.body; // Extract all our data from the body
-
-  console.log(email, newPassword, oldPassword);
 
   // Get the user we're looking for
   Users.findOne({ email: email })
