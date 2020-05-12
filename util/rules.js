@@ -40,6 +40,10 @@ function getRulesFromTokens(tokens, dbTokens, dbRegex) {
   // Our resulting rules to send
   let rules = {};
 
+  if (!tokens) {
+    return rules;
+  }
+
   // For each of our editor tokens...
   for (let token of tokens) {
     let tokenSig = `${token.type}:${token.value}`;  // Get the token signature
