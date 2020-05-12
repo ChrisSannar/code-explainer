@@ -38,9 +38,26 @@ router.get('/login', function (req, res, next) {
 router.post('/login', auth.redirectIfSignedIn, function (req, res, next) {
   let body = req.body;
 
-  Users.findOne({ email: body.email }, (err, user) => {
-    res.status(200).json(body);
-  });
+  Users.findOne({ email: body.email })
+    .then((user) => {
+      if (!user) {
+        console.log('no user')
+        res.redirect('/dashboard/login');
+      } else {
+        user.comparePassword(body.password, function (err, passing) {
+          if (err) return next();
+          if (passing) {
+            // req.session.user = Object.assign({}, body); // Set the session with the user
+            res.redirect('/');
+          } else {
+            return res.redirect('/dashboard/login');
+          }
+        });
+      }
+
+    }).catch(err => {
+      res.status(400).json(err);
+    })
 
 
   // // Check to see if the user exists
@@ -67,6 +84,42 @@ router.post('/login', auth.redirectIfSignedIn, function (req, res, next) {
   //     })
   //   }
   // });
+});
+
+router.post('/new-password', function (req, res, next) {
+  // Only allow this when while we're in a session
+  // if (req.session.user && req.cookies.user_sid) {
+  let { email, newPassword, oldPassword } = req.body; // Extract all our data from the body
+
+  console.log(email, newPassword, oldPassword);
+
+  // Get the user we're looking for
+  Users.findOne({ email: email })
+    .then(user => {
+      // // Make sure the old password matches
+      user.comparePassword(oldPassword, function (err, pass) {
+        if (err) return next();
+
+        // If they do, then update it
+        if (pass) {
+          user.updateOne({ password: newPassword })
+            .then(result => {
+              res.status(200).send('OK');
+            })
+            .catch(err => {
+              return res.status(500).send('Failed to Hash Password'); // This shouldn't happen...
+            });
+        } else {
+          return res.status(401).send('Incorrect Old Password');
+        }
+      });
+    })
+    .catch(err => {
+      return res.status(404).send('Could Not Find User');
+    });
+  // } else {
+  //   return res.status(401).send('Unauthroized to Change Passwords');
+  // }
 });
 
 router.get('/', auth.signedInChecker, function (req, res, next) {
