@@ -4,13 +4,9 @@ var router = express.Router();
 const path = require('path');
 const auth = require(path.join(__dirname, '..', 'middleware', 'auth'));
 
-// Our mongoose connection to the database
-const mongooseConnection =
-  require(path.join(__dirname, '..', 'util', 'mongoose-connect'))
-    (process.env.DB_ADMIN_URI);
-const Users =
-  require(path.join(__dirname, '..', 'models', 'user.schema'))
-    (mongooseConnection);
+// Our mongoose connection to the database, set up when we declare the router
+let mongooseConnection;
+let Users;
 
 router.use(auth.cookieChecker);
 
@@ -113,4 +109,9 @@ router.get('/', auth.signedInChecker, function (req, res, next) {
 // Server the files statically for any other routes
 router.use(express.static('dashboard'));
 
-module.exports = router;
+// Pass in the connection and 
+module.exports = function (connection) {
+  mongooseConnection = connection;
+  Users = require(path.join(__dirname, '..', 'models', 'user.schema'))(mongooseConnection);
+  return router;
+}

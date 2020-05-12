@@ -6,23 +6,13 @@ const path = require('path');
 const rulesUtil = require(path.join(__dirname, '../', 'util', 'rules'));
 
 // Our mongoose connection to the database
-const mongooseConnection =
-  require(path.join(__dirname, '..', 'util', 'mongoose-connect'))
-    (process.env.DB_URI);
+let mongooseConnection;
 
 // The functions to generate schemas based on programming language
-const TokenRulesGenerator =
-  require(path.join(__dirname, '..', 'models', 'tokenRule.schema'))
-    (mongooseConnection);
-const RegexRulesGenerator =
-  require(path.join(__dirname, '..', 'models', 'regexRule.schema'))
-    (mongooseConnection);
-const FeedbackGenerator =
-  require(path.join(__dirname, '..', 'models', 'feedback.schema'))
-    (mongooseConnection);
-const StatsGenerator =
-  require(path.join(__dirname, '..', 'models', 'stats.schema'))
-    (mongooseConnection);
+let TokenRulesGenerator;
+let RegexRulesGenerator;
+let FeedbackGenerator;
+let StatsGenerator;
 
 // GET a list of rules given the matching tokens
 // (Using POST to not limit the number of tokens to URL length)
@@ -82,5 +72,15 @@ router.post('/rules/:language', async function (req, res, next) {
 //   }
 // });
 
+// import the connection when we set up the router
+module.exports = function (connection) {
+  mongooseConnection = connection;
 
-module.exports = router;
+  // The functions to generate schemas based on programming language
+  TokenRulesGenerator = require(path.join(__dirname, '..', 'models', 'tokenRule.schema'))(mongooseConnection);
+  RegexRulesGenerator = require(path.join(__dirname, '..', 'models', 'regexRule.schema'))(mongooseConnection);
+  FeedbackGenerator = require(path.join(__dirname, '..', 'models', 'feedback.schema'))(mongooseConnection);
+  StatsGenerator = require(path.join(__dirname, '..', 'models', 'stats.schema'))(mongooseConnection);
+
+  return router;
+}

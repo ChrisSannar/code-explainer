@@ -5,17 +5,11 @@ const path = require('path');
 const rulesUtil = require(path.join(__dirname, '..', 'util', 'rules'));
 
 // Our mongoose connection to the database
-const mongooseConnection =
-  require(path.join(__dirname, '..', 'util', 'mongoose-connect'))
-    (process.env.DB_URI);
+let mongooseConnection;
 
 // The functions to generate schemas based on programming language
-const TokenRulesGenerator =
-  require(path.join(__dirname, '..', 'models', 'tokenRule.schema'))
-    (mongooseConnection);
-const RegexRulesGenerator =
-  require(path.join(__dirname, '..', 'models', 'regexRule.schema'))
-    (mongooseConnection);
+let TokenRulesGenerator;
+let RegexRulesGenerator;
 
 // GET all the rules of a particular language
 router.get('/:lang', async function (req, res, next) {
@@ -235,4 +229,13 @@ router.delete('/regex/:lang/:id', async function (req, res, next) {
   }
 });
 
-module.exports = router;
+// Set up the connection when we set up the route
+module.exports = function (connection) {
+  mongooseConnection = connection;
+
+  // The functions to generate schemas based on programming language
+  TokenRulesGenerator = require(path.join(__dirname, '..', 'models', 'tokenRule.schema'))(mongooseConnection);
+  RegexRulesGenerator = require(path.join(__dirname, '..', 'models', 'regexRule.schema'))(mongooseConnection);
+
+  return router;
+}
