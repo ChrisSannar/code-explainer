@@ -22,7 +22,6 @@ router.post('/rules/:language', async function (req, res, next) {
       // Extract our values from the body and parameters
       let tokens = req.body.tokens;
       let lang = req.params.language;
-      console.log('tokens', tokens, lang);
 
       // Get all the rules from the database
       let TokenRules = TokenRulesGenerator(lang + 'TokenRules');
