@@ -18,6 +18,9 @@ require('dotenv').config();
 const mongooseConnection =
   require(path.join(__dirname, 'util', 'mongoose-connect'))
     (process.env.DB_ADMIN_URI);
+const rulesConnection =
+  require(path.join(__dirname, 'util', 'mongoose-connect'))
+    (process.env.DB_URI);
 const MongoStore = require('connect-mongo')(session);  // Used to save the session to the db
 
 // Start up the app
@@ -46,14 +49,10 @@ app.use(cors({    // Allow access from our dashboard app
 // let error = require('./routes/error.js');
 
 // Routes
-let api = require('./routes/api'); // This is to perform CRUD oprations
-let codeApp = require('./routes/app'); // This is for the app to run
-let dashboard = require('./routes/dashboard');  // Login to the application
+let codeApp = require('./routes/app')(rulesConnection); // This is for the app to run
 let pages = require('./routes/pages'); // This displays the pages of the application
 
-app.use('/api/v1', api);
 app.use('/app', codeApp);
-app.use('/dashboard', dashboard);
 app.use('/', pages);
 
 // app.use(error.notFound);
