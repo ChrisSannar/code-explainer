@@ -1,5 +1,5 @@
 NEXT:
-    Allow the GET requests to filter based on query
+    build the login system
 
 REDESIGN!
     Alright, How are we going to approach this as an API?
