@@ -1,0 +1,3 @@
+/*
+  Make sure to render the right page given the route and situation
+*/

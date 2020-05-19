@@ -1,3 +1,7 @@
+/*
+  What behavior do I want from my application?
+*/
+
 var assert = require('assert');
 describe('Array', function () {
   describe('#indexOf()', function () {
