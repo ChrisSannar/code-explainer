@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const helmet = require('helmet');
 const logger = require('morgan');
-// const favicon = require('serve-favicon');
+const favicon = require('serve-favicon');
 const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
@@ -27,13 +27,11 @@ const MongoStore = require('connect-mongo')(session);  // Used to save the sessi
 let app = express();
 
 // setting up directories, parsing, and middleware
-app.use(express.static(`${__dirname}/public`));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing 
 app.use(compression()); // Compression
 app.use(helmet());  // Security
-app.use(logger('dev'));
-// app.use(favicon(`${__dirname}/web/img/favicon.ico`));
+app.use(favicon(`${__dirname}/favicon.ico`));
 app.use(session({
   key: 'user_sid',
   secret: process.env.SECRET,
@@ -44,6 +42,11 @@ app.use(session({
 app.use(cors({    // Allow access from our dashboard app
   origin: process.env.CORS_ORIGIN
 }));
+
+// If we're in a development environement, use the logger
+if (process.env.NODE_ENV === 'development') {
+  app.use(logger('dev'));
+}
 
 // Error Handlers
 // let error = require('./routes/error.js');
@@ -57,6 +60,9 @@ app.use('/', pages);
 
 // app.use(error.notFound);
 // app.use(error.errorHandler);
+
+// Remaining rutes are static
+app.use(express.static(`${__dirname}/public`));
 
 // Start the server
 if (!process.env.PORT) { process.env.PORT = 8080 }
