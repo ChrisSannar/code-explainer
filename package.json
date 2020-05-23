@@ -21,7 +21,8 @@
     "phantomjs-prebuilt": "^2.1.12",
     "rollup": "^0.66.2",
     "rollup-plugin-buble": "^0.19.2",
-    "rollup-watch": "^4.3.1"
+    "rollup-watch": "^4.3.1",
+    "morgan": "^1.9.1"
   },
   "dependencies": {
     "bcrypt": "4.0.1",
@@ -33,19 +34,13 @@
     "express": "^4.16.4",
     "express-session": "1.17.1",
     "helmet": "3.21.3",
-    "is-empty": "1.2.0",
     "mongodb": "3.4.1",
     "mongoose": "5.9.12",
-    "morgan": "^1.9.1",
     "node-gyp": "6.1.0",
     "path": "^0.12.7",
     "sanitize-html": "^1.20.0",
     "serve-favicon": "^2.5.0"
   },
-  "keywords": [
-    "example",
-    "heroku"
-  ],
   "engines": {
     "node": "10.x"
   }
