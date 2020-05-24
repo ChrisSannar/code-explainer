@@ -8,17 +8,24 @@ An online tool for beginner programmers to explain code.
 
 _Requires Node.js and npm to install_
 
-To run the code locally, navigate to the repository and install the needed dependencies with `npm install` and start the application with `npm start`.
-To run in development mode with nodemon and developer tools, use `npm run dev` instead.
+To run the code locally, install the needed dependencies with `npm install` and start the application with `npm start`.
+To run in development mode with nodemon and other developer tools, use `npm run dev` instead.
 
-The application runs primarily off of a set of JSON "Rules" that determine what each keyword links to.
-To do this, server uses a localhost mongo database named 'code-explainer' and pulls from 2 primary collections: `tokenRules` and `regexRules`.
-Each "Rule" is linked to the Ace code editor's token for that given keyword.
-Most constant keywords such as javascripts `let` and `console` are constant and won't change.
-However tokens that have varying values such as variable names and numbers will have differing values are identified by a regular expression.
-The general rule of thumb is that it's better to make a token rule, but if that isn't possible use a regex rule.
+## Use and Function
 
-The token rule is as follows:
+The application runs primarily off of a set of JSON "Rules" that determine what each keyword links to. When the contents of the editor change, the list of needed keywords updates and a request is send to the app to retrive the given rules.
+
+In order to be able to cover all possible keywords, the rules are divided into two primary collections: `tokenRules` and `regexRules`. The `tokenRules` are used for keywords that have a constant value such as JavaScript's `let` and `console`. The remaining types rely on both the type of token and a regular expression to decifer which rule to apply.
+
+## Database Setup
+
+1. Set the environment variables `DB_URI` to the database you wish to use.
+2. Have the names of each of the following collection prefaced by the paired language in camelCase. Ex `javascriptTokenRules`
+3. Follow the schemas setup in the `models` folder and as listed below
+
+Each rule should follow the given format:
+
+Token Rule:
 
 ```
 {
@@ -30,7 +37,7 @@ The token rule is as follows:
 }
 ```
 
-A regex rule is similar:
+Regex Rule:
 
 ```
 {
@@ -43,8 +50,15 @@ A regex rule is similar:
 
 If the regex field is left empty, then the selected keyword will be identified by its `tokenType` only.
 
----
+## Other Notes
 
-In addition to the rules in the database, the 'feedback' button given to every rule is stored into a collection entitled "<language>Feedback" with a field for the given tag of the token.
+The given environment variables can be used in setup:
 
-More features will follow in the next version
+ip address: `IP`
+port number: `PORT`
+environment: `NODE_ENV`
+database url: `DB_URI`
+
+## Licence
+
+Code Explainer and Code Explainer Dashboard are released under the MIT Licence.
