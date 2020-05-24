@@ -7,8 +7,6 @@ const compression = require('compression');
 const helmet = require('helmet');
 const logger = require('morgan');
 const favicon = require('serve-favicon');
-const session = require('express-session');
-const cors = require('cors');
 const path = require('path');
 
 // Get our Enviroment Variables
@@ -21,7 +19,6 @@ const mongooseConnection =
 const rulesConnection =
   require(path.join(__dirname, 'util', 'mongoose-connect'))
     (process.env.DB_URI);
-const MongoStore = require('connect-mongo')(session);  // Used to save the session to the db
 
 // Start up the app
 let app = express();
@@ -32,16 +29,6 @@ app.use(bodyParser.urlencoded({ extended: true })); // for parsing
 app.use(compression()); // Compression
 app.use(helmet());  // Security
 app.use(favicon(`${__dirname}/favicon.ico`));
-app.use(session({
-  key: 'user_sid',
-  secret: process.env.SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection }),
-}));
-app.use(cors({    // Allow access from our dashboard app
-  origin: process.env.CORS_ORIGIN
-}));
 
 // If we're in a development environement, use the logger
 if (process.env.NODE_ENV === 'development') {
@@ -83,5 +70,4 @@ function gracefulShutdown() {
 }
 
 process.on('SIGTERM', gracefulShutdown);
-
 process.on('SIGINT', gracefulShutdown);
