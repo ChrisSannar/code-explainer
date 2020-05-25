@@ -59,6 +59,18 @@ port number: `PORT`
 environment: `NODE_ENV`
 database url: `DB_URI`
 
+## Help Out
+
+If you like this project, consider donating to me [here](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JCF8SR9YKRXJA&currency_code=USD&source=url).
+
+This will help with the uptime costs as well as give me more time to implement other features. Some more features I'd like to implement:
+
+- Additional languages and rules (Python, Java, C++, etc.).
+- Smooth fancier animations.
+- A context parser to explain 'sentences' instead of just 'words'.
+
+If you would like to help me write rules, shoot me an email and we can get talking: chris.sannar.dev@gmail.com
+
 ## Licence
 
 Code Explainer and Code Explainer Dashboard are released under the MIT Licence.

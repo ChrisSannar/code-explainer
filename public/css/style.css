@@ -4,24 +4,45 @@ body {
   padding-bottom: 1em;
   background: black;
   margin-top: 0;
+  font-family: "Fira Sans", sans-serif;
 }
+
+/*
+  Header
+*/
 .header {
   background: #232323;
   color: #f5f5f5;
   margin: auto;
+  padding: 0.5em 1em;
   clear: both;
   width: 75%;
   display: flex;
+  justify-content: space-between;
   align-items: baseline;
-  font-family: "Fira Sans", sans-serif;
   box-shadow: 0px 1px 0.5em #2f2f2f;
 }
-.header * {
-  margin: 0.7em 0.2em;
+
+.title {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  text-align: left;
 }
+
+.title * {
+  margin: 0;
+}
+
 .header-title {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
 }
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+}
+
 #lang-select {
   -webkit-appearance: none;
   margin-left: auto;
@@ -36,10 +57,26 @@ body {
   background: #0b0a09;
   color: #f5f5f5;
 }
-#wrap {
+
+.settings {
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.settings:hover {
+  transform: rotate(60deg);
+}
+
+/*
+  Body
+*/
+
+/* #wrap {
   display: flex;
   width: 75%;
-}
+} */
 #editor {
   position: absolute;
   top: 4em;
@@ -47,7 +84,10 @@ body {
   bottom: 0;
   left: 13%;
   width: 50%;
+  /*
+  /* */
 }
+
 #side {
   position: absolute;
   background: #e3e3e3;
@@ -58,9 +98,20 @@ body {
   right: 0;
   bottom: 0;
   padding: 1.5em 1.5em;
-  font-family: "Fira Sans", sans-serif;
   text-align: left;
+  /*
+  /* */
 }
+
+code {
+  padding: 0em 1em;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+/*
+  Extra (modals)
+*/
 #feedbackButton {
   margin-bottom: 1.5em;
   padding: 0.5em 1em;
@@ -68,16 +119,60 @@ body {
   background: #0b0a09;
   color: #f5f5f5;
 }
+
 #feedbackForm {
   text-align: left;
 }
+
 #feedbackBody {
   padding: 0.5em;
   margin: 0.5em 0;
   resize: none;
 }
-code {
-  padding: 0em 1em;
-  border-radius: 5px;
-  overflow-x: auto;
+
+#settings {
+  display: block;
+  position: absolute;
+  right: 12.5%;
+  margin-top: 0.3em;
+  /* padding: 0.5em 1em; */
+  background: #e3e3e3;
+  box-shadow: #333333 0 0 30px;
+  text-align: left;
+  border-radius: 3px;
+  z-index: 5;
+}
+
+#settings ul {
+  padding: 0;
+  margin: 0;
+}
+
+#settings li {
+  list-style: none;
+  padding: 0.5em 1em;
+  /* padding-left: 0; */
+}
+
+#settings li:hover {
+  background: #d6d6d6;
+}
+
+#settings a {
+  color: black;
+  text-decoration: none;
+}
+
+/* Settings triangle */
+#settings:before {
+  position: absolute;
+  top: -10px;
+  right: 0.75em;
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #e3e3e3;
+  z-index: 2;
 }

@@ -13,16 +13,26 @@
   </head>
   <body>
     <div class="header">
-      <h3 class="header-title">Code Explainer</h3>
-      <p class="version">Beta</p>
-      <select
-        name="lang"
-        id="lang-select"
-        onchange="changeLanguage(this.value)"
-      >
-        <option value="javascript">Javascript</option>
-        <option value="python">Python</option>
-      </select>
+      <div class="title">
+        <h3 class="header-title">Code Explainer</h3>
+        <p class="version">Beta</p>
+      </div>
+      <div class="options">
+        <select
+          name="lang"
+          id="lang-select"
+          onchange="changeLanguage(this.value)"
+        >
+          <option value="javascript">Javascript</option>
+          <option value="python">Python</option>
+        </select>
+        <img
+          src="../Settings-01.svg"
+          alt="Settings"
+          class="settings"
+          onclick="toggleSettings()"
+        />
+      </div>
     </div>
 
     <div id="wrap">
@@ -48,6 +58,19 @@
 
       <div id="confirmBox">
         <p id="feedbackConfirm"></p>
+      </div>
+
+      <div id="settings">
+        <ul>
+          <li>
+            <a href="http://www.codeexplainer.org:3000">Dashboard</a>
+          </li>
+          <li>
+            <a href="https://www.github.com/ChrisSannar/code-explainer"
+              >Github</a
+            >
+          </li>
+        </ul>
       </div>
     </div>
 
