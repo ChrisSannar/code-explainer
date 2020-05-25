@@ -1,4 +1,4 @@
-// set the display height to change when the window changes
+// Set the display height to change when the window changes
 window.onresize = changeDisplayHeight;
 function changeDisplayHeight() {
   document.querySelector("#display").style.height =
@@ -13,9 +13,16 @@ function newTabLinks(el) {
   });
 }
 
-// uses 'highlighjs' to highlight code portions of the document
+// Uses 'highlighjs' to highlight code portions of the document
 function highlightCode() {
   document.querySelectorAll("pre code").forEach((block) => {
     hljs.highlightBlock(block);
   });
+}
+
+// Displays the settings dropdown
+let settingsToggle = true;
+function toggleSettings() {
+  settingsToggle = !settingsToggle;
+  document.querySelector('#settings').style.display = settingsToggle ? 'block' : 'none';
 }
