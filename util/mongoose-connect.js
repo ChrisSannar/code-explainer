@@ -6,6 +6,7 @@ mongoose.set('useFindAndModify', false);
 module.exports = function (database) {
   let connection = mongoose.createConnection(database, { useNewUrlParser: true, useUnifiedTopology: true });
 
+  // For any errors and changes with the connection
   connection.on('error', function () {
     mongoError = true;
     console.error.bind(console, 'connection error:')
