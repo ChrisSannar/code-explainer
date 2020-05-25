@@ -5,23 +5,44 @@ body {
   background: black;
   margin-top: 0;
 }
+
+/*
+  Header
+*/
 .header {
   background: #232323;
   color: #f5f5f5;
   margin: auto;
+  padding: 0.5em 1em;
   clear: both;
   width: 75%;
   display: flex;
+  justify-content: space-between;
   align-items: baseline;
   font-family: "Fira Sans", sans-serif;
   box-shadow: 0px 1px 0.5em #2f2f2f;
 }
-.header * {
-  margin: 0.7em 0.2em;
+
+.title {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  text-align: left;
 }
+
+.title * {
+  margin: 0;
+}
+
 .header-title {
-  margin-left: 0.5em;
+  margin-right: 0.5em;
 }
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+}
+
 #lang-select {
   -webkit-appearance: none;
   margin-left: auto;
@@ -36,10 +57,26 @@ body {
   background: #0b0a09;
   color: #f5f5f5;
 }
-#wrap {
+
+.settings {
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.settings:hover {
+  transform: rotate(60deg);
+}
+
+/*
+  Body
+*/
+
+/* #wrap {
   display: flex;
   width: 75%;
-}
+} */
 #editor {
   position: absolute;
   top: 4em;
@@ -47,7 +84,10 @@ body {
   bottom: 0;
   left: 13%;
   width: 50%;
+  /*
+  /* */
 }
+
 #side {
   position: absolute;
   background: #e3e3e3;
@@ -60,7 +100,19 @@ body {
   padding: 1.5em 1.5em;
   font-family: "Fira Sans", sans-serif;
   text-align: left;
+  /*
+  /* */
 }
+
+code {
+  padding: 0em 1em;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+/*
+  Extra (modals)
+*/
 #feedbackButton {
   margin-bottom: 1.5em;
   padding: 0.5em 1em;
@@ -75,9 +127,4 @@ body {
   padding: 0.5em;
   margin: 0.5em 0;
   resize: none;
-}
-code {
-  padding: 0em 1em;
-  border-radius: 5px;
-  overflow-x: auto;
 }

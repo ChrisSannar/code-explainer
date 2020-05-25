@@ -5,7 +5,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const compression = require('compression');
 const helmet = require('helmet');
-const logger = require('morgan');
 const favicon = require('serve-favicon');
 const path = require('path');
 
@@ -32,6 +31,7 @@ app.use(favicon(`${__dirname}/favicon.ico`));
 
 // If we're in a development environement, use the logger
 if (process.env.NODE_ENV === 'development') {
+  const logger = require('morgan');
   app.use(logger('dev'));
 }
 
