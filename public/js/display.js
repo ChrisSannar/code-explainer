@@ -21,7 +21,7 @@ function highlightCode() {
 }
 
 // Displays the settings dropdown
-let settingsToggle = true;
+let settingsToggle = false;
 function toggleSettings() {
   settingsToggle = !settingsToggle;
   document.querySelector('#settings').style.display = settingsToggle ? 'block' : 'none';

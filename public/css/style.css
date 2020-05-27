@@ -131,7 +131,7 @@ code {
 }
 
 #settings {
-  display: block;
+  display: none;
   position: absolute;
   right: 12.5%;
   margin-top: 0.3em;
