@@ -151,6 +151,7 @@ code {
 #settings li {
   list-style: none;
   padding: 0.5em 1em;
+  cursor: pointer;
   /* padding-left: 0; */
 }
 

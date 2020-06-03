@@ -82,6 +82,7 @@ function parseRules(newRules) {
 }
 
 // each time we click in the editor...
+var currentToken = null;
 editor.on("click", function (e) {
   let pos = e.$pos;
   let sec = editor.session;
@@ -89,6 +90,7 @@ editor.on("click", function (e) {
 
   // If we're dealing with text, no rules for that
   if (tolk && tolk?.type != "text") {
+    currentToken = tolk;  // For feeback purposes
     let rule = rules[`${tolk.type}:${tolk.value}`]; // See if we have the rule for that given token
     if (rule) {
       let newHtml = rule.html;
