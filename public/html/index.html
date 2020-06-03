@@ -24,7 +24,6 @@
           onchange="changeLanguage(this.value)"
         >
           <option value="javascript">Javascript</option>
-          <option value="python">Python</option>
         </select>
         <img
           src="../Settings-01.svg"
@@ -46,13 +45,26 @@
 
       <div id="feedback">
         <form id="feedbackForm" action="">
-          <label for="feedbackBody">Tell us how we can improve:</label>
-          <textarea
-            name="feedbackBody"
-            id="feedbackBody"
-            cols="40"
-            rows="10"
-          ></textarea>
+          <div>
+            <label for="feedbackCurrentRule"
+              >Does this pertain to the current explination?
+            </label>
+            <input
+              type="checkbox"
+              name="feedbackCurrentRule"
+              id="feedbackCurrentRule"
+            />
+          </div>
+          <br />
+          <div>
+            <label for="feedbackBody">Tell us how we can improve:</label>
+            <textarea
+              name="feedbackBody"
+              id="feedbackBody"
+              cols="40"
+              rows="6"
+            ></textarea>
+          </div>
         </form>
       </div>
 
@@ -64,6 +76,9 @@
         <ul>
           <li>
             <a href="http://www.codeexplainer.org:3000">Dashboard</a>
+          </li>
+          <li onclick="openFeedbackModal()">
+            Feedback
           </li>
           <li>
             <a

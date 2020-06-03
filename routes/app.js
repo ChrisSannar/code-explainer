@@ -40,6 +40,22 @@ router.post('/rules/:language', async function (req, res, next) {
   }
 });
 
+// POST feedback to the server
+router.post('/feedback', function (req, res, next) {
+
+  // Set up our model to save our data
+  let FeedbackModel = FeedbackGenerator(req.body.currentLang + 'Feedback');
+
+  // Format the data we're getting from the request
+  let { feedback, feedbackToken } = req.body;
+  let tag = feedbackToken ? `${feedbackToken.type}:${feedbackToken.value}` : '';
+
+  // Save the data into the model (and by that effect, the database)
+  new FeedbackModel(tag ? { feedback, tag } : { feedback }).save()
+    .then(() => res.status(201).send('OK'))
+    .catch(err => next(err));
+});
+
 // import the connection when we set up the router
 module.exports = function (connection) {
   mongooseConnection = connection;
