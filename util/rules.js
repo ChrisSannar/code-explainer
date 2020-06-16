@@ -43,11 +43,14 @@ function getRulesFromTokens(tokens, dbTokens, dbRegex) {
   if (!tokens) {
     return rules;
   }
-
   // For each of our editor tokens...
   for (let token of tokens) {
     let tokenSig = `${token.type}:${token.value}`;  // Get the token signature
-    let found = dbTokens.find(val => val.token == tokenSig); // lets see if it's found in the tokens database
+    // let found = dbTokens.find(val => val.token == tokenSig); // lets see if it's found in the tokens database
+
+    // Find based on they token type and value
+    let found = dbTokens.find(val => val.tokenType === token.type && val.tokenValue === token.value)
+    // let found = dbTokens.find(val => val.token === tokenSig);
     if (found) {
       // In the case that there is a token of the rule... then we're good!
       rules[tokenSig] = found;  // Tack and move on to the next
