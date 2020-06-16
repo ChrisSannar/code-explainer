@@ -4,6 +4,8 @@ var Schema = mongoose.Schema;
 var TokenRuleSchema = Schema({
   tag: { type: String, required: true, index: { unique: true } },
   token: { type: String, required: true },
+  tokenType: { type: String, required: true },
+  tokenValue: { type: String, required: true },
   html: { type: String, required: true },
   links: [String]
 });
