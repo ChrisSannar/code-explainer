@@ -1,6 +1,6 @@
 # Code Explainer
 
-An online tool for beginner programmers to explain code.
+An online tool to explain code to beginner programmers.
 
 ![Code Explainer Display](assets/display.png)
 
