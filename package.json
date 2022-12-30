@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "blint": "^1",
-    "mocha": "7.1.2",
+    "mocha": "10.2.0",
     "morgan": "^1.9.1",
     "node-static": "0.7.11",
     "nodemon": "2.0.4",
